@@ -1,0 +1,47 @@
+[
+  {
+    "id": "m1",
+    "category": "cat_myths",
+    "difficulty": "beginner",
+    "question": "Stimmt es, dass Katzen immer auf den Pfoten landen?",
+    "answers": ["Ja, immer ohne Ausnahme", "Nein, das ist ein Mythos", "Nur bei kleinen Höhen", "Nur bei großen Höhen"],
+    "correctIndex": 2,
+    "explanation": "Katzen haben einen ausgeprägten Drehmechanismus, landen meist auf den Pfoten – aber nicht immer und nicht aus jeder Höhe."
+  },
+  {
+    "id": "m2",
+    "category": "cat_myths",
+    "difficulty": "beginner",
+    "question": "Haben Katzen wirklich neun Leben?",
+    "answers": ["Ja, wissenschaftlich bewiesen", "Nein, es ist ein kultureller Mythos", "Nur in manchen Ländern", "Nur Hauskatzen"],
+    "correctIndex": 1,
+    "explanation": "Neun Leben ist ein Sprichwort für die Überlebensfähigkeit von Katzen – biologisch haben sie natürlich nur eines."
+  },
+  {
+    "id": "m3",
+    "category": "cat_myths",
+    "difficulty": "beginner",
+    "question": "Sehen Katzen in völliger Dunkelheit?",
+    "answers": ["Ja, sie brauchen kein Licht", "Nein, sie brauchen etwas Restlicht", "Nur im Freien", "Nur junge Katzen"],
+    "correctIndex": 1,
+    "explanation": "Katzen sehen bei sehr schwachem Licht sehr gut, aber in völliger Dunkelheit können auch sie nichts sehen."
+  },
+  {
+    "id": "m4",
+    "category": "cat_myths",
+    "difficulty": "beginner",
+    "question": "Sind alle dreifarbigen Katzen weiblich?",
+    "answers": ["Ja, immer", "Meistens, aber es gibt sehr seltene Ausnahmen", "Nein, etwa die Hälfte ist männlich", "Nur bei bestimmten Rassen"],
+    "correctIndex": 1,
+    "explanation": "Dreifarbige (Schildpatt-)Katzen sind fast ausschließlich weiblich, weil die Fellfarbe X-chromosomal vererbt wird. Männliche Exemplare sind extrem selten."
+  },
+  {
+    "id": "m5",
+    "category": "cat_myths",
+    "difficulty": "beginner",
+    "question": "Stimmt es, dass Katzen Milch lieben und sie gut vertragen?",
+    "answers": ["Ja, Milch ist perfekt für Katzen", "Nein, viele Katzen sind laktoseintolerant", "Nur Katzenmilch ist gut", "Nur Kitten vertragen Milch"],
+    "correctIndex": 1,
+    "explanation": "Viele erwachsene Katzen sind laktoseintolerant. Kuhmilch kann bei ihnen Verdauungsprobleme verursachen."
+  }
+]

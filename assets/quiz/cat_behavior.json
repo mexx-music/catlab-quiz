@@ -1,0 +1,47 @@
+[
+  {
+    "id": "b1",
+    "category": "cat_behavior",
+    "difficulty": "beginner",
+    "question": "Warum reibt eine Katze ihren Kopf an dir?",
+    "answers": ["Sie hat Hunger", "Sie markiert dich mit ihrem Duft", "Sie will spielen", "Sie ist krank"],
+    "correctIndex": 1,
+    "explanation": "Katzen haben Duftdrüsen am Kopf und markieren so ihr Revier und ihre Lieblingsmenschen."
+  },
+  {
+    "id": "b2",
+    "category": "cat_behavior",
+    "difficulty": "beginner",
+    "question": "Was bedeutet es, wenn eine Katze den Schwanz aufrecht hält?",
+    "answers": ["Sie ist ängstlich", "Sie will angreifen", "Sie ist entspannt und freundlich", "Sie ist krank"],
+    "correctIndex": 2,
+    "explanation": "Ein aufrecht gehaltener Schwanz signalisiert Selbstbewusstsein und freundliche Stimmung."
+  },
+  {
+    "id": "b3",
+    "category": "cat_behavior",
+    "difficulty": "beginner",
+    "question": "Warum bringt eine Katze manchmal tote Tiere mit?",
+    "answers": ["Sie ist böse", "Sie bringt dir ein Geschenk", "Sie ist verwirrt", "Sie hat Angst"],
+    "correctIndex": 1,
+    "explanation": "Katzen bringen ihrer Familie Beute als Fürsorge und Geschenk, ähnlich wie in der Wildnis."
+  },
+  {
+    "id": "b4",
+    "category": "cat_behavior",
+    "difficulty": "beginner",
+    "question": "Was bedeutet es, wenn eine Katze blinzelt und dabei die Augen langsam schließt?",
+    "answers": ["Sie ist aggressiv", "Sie zeigt Zuneigung", "Sie ist schläfrig", "Sie ist krank"],
+    "correctIndex": 1,
+    "explanation": "Langsames Blinzeln ist ein Zeichen von Vertrauen und Zuneigung – auch 'Katzenküsse' genannt."
+  },
+  {
+    "id": "b5",
+    "category": "cat_behavior",
+    "difficulty": "beginner",
+    "question": "Warum knetet eine Katze weiche Oberflächen mit den Pfoten?",
+    "answers": ["Sie trainiert ihre Muskeln", "Sie sucht Flöhe", "Es ist ein Beruhigungsverhalten aus der Kittenzeit", "Sie will kratzen"],
+    "correctIndex": 2,
+    "explanation": "Das Kneten stammt aus der Kittenzeit, als sie so Milch bei der Mutter stimulierten – es beruhigt sie."
+  }
+]

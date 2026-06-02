@@ -1,0 +1,47 @@
+[
+  {
+    "id": "p1",
+    "category": "cat_purring",
+    "difficulty": "beginner",
+    "question": "In welchem Frequenzbereich schnurren Katzen in der Regel?",
+    "answers": ["5–10 Hz", "25–150 Hz", "300–500 Hz", "1000–2000 Hz"],
+    "correctIndex": 1,
+    "explanation": "Katzen schnurren typischerweise zwischen 25 und 150 Hz – ein Bereich, der heilende Wirkung auf Knochen haben kann."
+  },
+  {
+    "id": "p2",
+    "category": "cat_purring",
+    "difficulty": "beginner",
+    "question": "Schnurren Katzen nur, wenn sie glücklich sind?",
+    "answers": ["Ja, immer", "Nein, auch bei Stress oder Schmerz", "Nur beim Schlafen", "Nur bei anderen Katzen"],
+    "correctIndex": 1,
+    "explanation": "Katzen schnurren auch zur Selbstberuhigung, bei Angst oder sogar wenn sie verletzt sind."
+  },
+  {
+    "id": "p3",
+    "category": "cat_purring",
+    "difficulty": "beginner",
+    "question": "Können große Raubkatzen wie Löwen schnurren?",
+    "answers": ["Ja, alle Katzen können schnurren", "Nein, sie brüllen stattdessen", "Nur Löwinnen", "Nur junge Löwen"],
+    "correctIndex": 1,
+    "explanation": "Große Raubkatzen wie Löwen und Tiger können brüllen, aber nicht schnurren. Hauskatzen können nicht brüllen."
+  },
+  {
+    "id": "p4",
+    "category": "cat_purring",
+    "difficulty": "beginner",
+    "question": "Wie erzeugen Katzen das Schnurren?",
+    "answers": ["Durch Vibration der Zunge", "Durch Kehlkopfmuskeln und Zwerchfell", "Durch die Nase", "Durch Reiben der Zähne"],
+    "correctIndex": 1,
+    "explanation": "Das Schnurren entsteht durch schnelle Bewegungen der Kehlkopfmuskeln in Kombination mit dem Atemrhythmus."
+  },
+  {
+    "id": "p5",
+    "category": "cat_purring",
+    "difficulty": "beginner",
+    "question": "Ab wann können Katzenbabys schnurren?",
+    "answers": ["Erst mit 6 Monaten", "Erst nach dem Öffnen der Augen", "Bereits wenige Tage nach der Geburt", "Erst als erwachsene Katze"],
+    "correctIndex": 2,
+    "explanation": "Katzenbabys können schon wenige Tage nach der Geburt schnurren – zur Kommunikation mit der Mutter."
+  }
+]
