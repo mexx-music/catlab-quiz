@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/content/data/post_image_export_service.dart';
+import 'package:catlab_quiz/features/content/data/share_service.dart';
 import 'package:catlab_quiz/features/content/widgets/post_preview_card.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
@@ -18,6 +19,7 @@ class PostCreatorScreen extends StatefulWidget {
 class _PostCreatorScreenState extends State<PostCreatorScreen> {
   final _repo = QuizRepository();
   final _exportService = PostImageExportService();
+  final _shareService = ShareService();
   final _previewKey = GlobalKey();
 
   List<QuizDefinition> _catalog = [];
@@ -27,6 +29,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
   bool _loadingCatalog = true;
   bool _loadingQuestions = false;
   bool _exportingPng = false;
+  bool _sharing = false;
 
   @override
   void initState() {
@@ -190,6 +193,34 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     }
   }
 
+  Future<void> _nativeShare(BuildContext context) async {
+    final quiz = _selectedQuiz;
+    final question = _selectedQuestion;
+    if (quiz == null || question == null) return;
+
+    final pixelRatio =
+        MediaQuery.of(context).devicePixelRatio.clamp(2.0, 3.0);
+
+    setState(() => _sharing = true);
+
+    final bytes = await _exportService.renderToPng(
+      _previewKey,
+      pixelRatio: pixelRatio,
+    );
+
+    if (!context.mounted) return;
+    setState(() => _sharing = false);
+
+    if (bytes != null) {
+      await _shareService.shareImage(
+        bytes,
+        _exportService.filenameFor(quiz.id, question.id),
+      );
+    } else {
+      await _shareService.shareText(_buildPostText(question));
+    }
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -217,7 +248,9 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                         onCopy: () => _copyText(context),
                         onShare: () => _showShareSheet(context),
                         onExportPng: () => _exportPng(context),
+                        onNativeShare: () => _nativeShare(context),
                         exportingPng: _exportingPng,
+                        sharing: _sharing,
                       )
                     : null;
 
@@ -284,13 +317,17 @@ class _ActionButtons extends StatelessWidget {
   final VoidCallback onCopy;
   final VoidCallback onShare;
   final VoidCallback onExportPng;
+  final VoidCallback onNativeShare;
   final bool exportingPng;
+  final bool sharing;
 
   const _ActionButtons({
     required this.onCopy,
     required this.onShare,
     required this.onExportPng,
+    required this.onNativeShare,
     required this.exportingPng,
+    required this.sharing,
   });
 
   @override
@@ -319,10 +356,19 @@ class _ActionButtons extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.share_outlined, size: 15),
-                  label: const Text('Teilen vorbereiten',
-                      style: TextStyle(fontSize: 13)),
-                  onPressed: onShare,
+                  icon: sharing
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(Icons.ios_share, size: 15),
+                  label: Text(
+                    sharing ? 'Wird geteilt…' : 'Teilen',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  onPressed: sharing ? null : onNativeShare,
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -333,29 +379,48 @@ class _ActionButtons extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              icon: exportingPng
-                  ? const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.image_outlined, size: 15),
-              label: Text(
-                exportingPng ? 'Wird erstellt…' : 'PNG erstellen',
-                style: const TextStyle(fontSize: 13),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.share_outlined, size: 15),
+                  label: const Text('Teilen vorbereiten',
+                      style: TextStyle(fontSize: 13)),
+                  onPressed: onShare,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey.shade700,
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
               ),
-              onPressed: exportingPng ? null : onExportPng,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.grey.shade700,
-                side: BorderSide(color: Colors.grey.shade400),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: exportingPng
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.image_outlined, size: 15),
+                  label: Text(
+                    exportingPng ? 'Wird erstellt…' : 'PNG erstellen',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  onPressed: exportingPng ? null : onExportPng,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey.shade700,
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
