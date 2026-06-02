@@ -212,13 +212,26 @@ class _Footer extends StatelessWidget {
           top: BorderSide(color: AppTheme.primary.withAlpha(50)),
         ),
       ),
-      child: const Text(
-        '🐱 quiz.schnurrpurr.com',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: AppTheme.primary,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Teste dein Katzenwissen:',
+            style: TextStyle(
+              fontSize: 10,
+              color: AppTheme.primary.withAlpha(180),
+            ),
+          ),
+          const SizedBox(height: 1),
+          const Text(
+            '🐱 quiz.schnurrpurr.com',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.primary,
+            ),
+          ),
+        ],
       ),
     );
   }
