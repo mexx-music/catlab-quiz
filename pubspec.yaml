@@ -59,6 +59,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/
     - assets/quiz/quiz_catalog.json
     - assets/quiz/cat_breeds_beginner.json
     - assets/quiz/cat_behavior.json

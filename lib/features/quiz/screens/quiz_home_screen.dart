@@ -124,6 +124,21 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                             );
                           }
                         },
+                        onCopyResolution: () async {
+                          final q = _dailyQuestion!;
+                          final labels = ['A', 'B', 'C', 'D'];
+                          final letter = labels[q.correctIndex];
+                          final text =
+                              '✅ Auflösung zur Katzenfrage des Tages:\n\nRichtige Antwort:\n$letter) ${q.answers[q.correctIndex]}\n\nErklärung:\n${q.explanation}\n\n🐱 Mehr Katzenwissen bei CatLab Quiz.';
+                          await Clipboard.setData(ClipboardData(text: text));
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Auflösung kopiert'),
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                     const SizedBox(height: 16),
@@ -369,67 +384,102 @@ class _QuizCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          child: Row(
-            children: [
-              Text(quiz.emoji, style: const TextStyle(fontSize: 32)),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      quiz.title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textDark,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      quiz.description,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    if (highscore != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        'Bestpunktzahl: $highscore / 5',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.primary,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              child: quiz.imageAsset != null
+                  ? Image.asset(
+                      quiz.imageAsset!,
+                      width: double.infinity,
+                      height: 140,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          _ImagePlaceholder(quiz.emoji),
+                    )
+                  : _ImagePlaceholder(quiz.emoji),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Row(
+                children: [
+                  Text(quiz.emoji, style: const TextStyle(fontSize: 28)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          quiz.title,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textDark,
+                          ),
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 4),
-                    GestureDetector(
-                      onTap: onShowPost,
-                      child: const Text(
-                        'Post-Text anzeigen',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.primary,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppTheme.primary,
+                        const SizedBox(height: 2),
+                        Text(
+                          quiz.description,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
-                      ),
+                        if (highscore != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            'Bestpunktzahl: $highscore / 5',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 4),
+                        GestureDetector(
+                          onTap: onShowPost,
+                          child: const Text(
+                            'Post-Text anzeigen',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.primary,
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppTheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: AppTheme.primary,
+                  ),
+                ],
               ),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: AppTheme.primary,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _ImagePlaceholder extends StatelessWidget {
+  final String emoji;
+  const _ImagePlaceholder(this.emoji);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 100,
+      color: AppTheme.secondary,
+      child: Center(
+        child: Text(emoji, style: const TextStyle(fontSize: 48)),
       ),
     );
   }
@@ -438,8 +488,13 @@ class _QuizCard extends StatelessWidget {
 class _DailyQuestionCard extends StatelessWidget {
   final QuizQuestion question;
   final VoidCallback onCopy;
+  final VoidCallback onCopyResolution;
 
-  const _DailyQuestionCard({required this.question, required this.onCopy});
+  const _DailyQuestionCard({
+    required this.question,
+    required this.onCopy,
+    required this.onCopyResolution,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -474,18 +529,36 @@ class _DailyQuestionCard extends StatelessWidget {
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                   const SizedBox(height: 6),
-                  GestureDetector(
-                    onTap: onCopy,
-                    child: const Text(
-                      'Post kopieren',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppTheme.primary,
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: onCopy,
+                        child: const Text(
+                          'Post kopieren',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppTheme.primary,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: onCopyResolution,
+                        child: Text(
+                          'Auflösung kopieren',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
