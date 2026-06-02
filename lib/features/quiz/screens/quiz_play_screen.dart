@@ -7,8 +7,13 @@ import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class QuizPlayScreen extends StatefulWidget {
   final List<QuizQuestion> questions;
+  final String categoryKey;
 
-  const QuizPlayScreen({super.key, required this.questions});
+  const QuizPlayScreen({
+    super.key,
+    required this.questions,
+    required this.categoryKey,
+  });
 
   @override
   State<QuizPlayScreen> createState() => _QuizPlayScreenState();
@@ -37,8 +42,11 @@ class _QuizPlayScreenState extends State<QuizPlayScreen> {
     if (isLast) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              QuizResultScreen(score: _score, total: widget.questions.length),
+          builder: (_) => QuizResultScreen(
+            score: _score,
+            total: widget.questions.length,
+            categoryKey: widget.categoryKey,
+          ),
         ),
       );
     } else {

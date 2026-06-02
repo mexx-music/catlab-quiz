@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
@@ -7,11 +8,13 @@ class _QuizCategory {
   final String title;
   final String emoji;
   final String assetPath;
+  final String categoryKey;
 
   const _QuizCategory({
     required this.title,
     required this.emoji,
     required this.assetPath,
+    required this.categoryKey,
   });
 }
 
@@ -20,35 +23,67 @@ const _categories = [
     title: 'Katzenrassen',
     emoji: '🐈',
     assetPath: 'assets/quiz/cat_breeds_beginner.json',
+    categoryKey: 'cat_breeds',
   ),
   _QuizCategory(
     title: 'Katzenverhalten',
     emoji: '🐾',
     assetPath: 'assets/quiz/cat_behavior.json',
+    categoryKey: 'cat_behavior',
   ),
   _QuizCategory(
     title: 'Schnurren',
     emoji: '😸',
     assetPath: 'assets/quiz/cat_purring.json',
+    categoryKey: 'cat_purring',
   ),
   _QuizCategory(
     title: 'Katzenmythen',
     emoji: '🔮',
     assetPath: 'assets/quiz/cat_myths.json',
+    categoryKey: 'cat_myths',
   ),
 ];
 
-class QuizHomeScreen extends StatelessWidget {
+class QuizHomeScreen extends StatefulWidget {
   const QuizHomeScreen({super.key});
+
+  @override
+  State<QuizHomeScreen> createState() => _QuizHomeScreenState();
+}
+
+class _QuizHomeScreenState extends State<QuizHomeScreen> {
+  final _highscoreRepo = HighscoreRepository();
+  final Map<String, int?> _highscores = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHighscores();
+  }
+
+  Future<void> _loadHighscores() async {
+    final results = <String, int?>{};
+    for (final cat in _categories) {
+      results[cat.categoryKey] = await _highscoreRepo.getHighscore(cat.categoryKey);
+    }
+    if (mounted) {
+      setState(() => _highscores.addAll(results));
+    }
+  }
 
   Future<void> _startQuiz(BuildContext context, _QuizCategory category) async {
     final questions = await QuizRepository().loadQuestions(category.assetPath);
     if (!context.mounted) return;
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => QuizPlayScreen(questions: questions),
+        builder: (_) => QuizPlayScreen(
+          questions: questions,
+          categoryKey: category.categoryKey,
+        ),
       ),
     );
+    if (mounted) _loadHighscores();
   }
 
   @override
@@ -82,6 +117,7 @@ class QuizHomeScreen extends StatelessWidget {
                     final cat = _categories[index];
                     return _CategoryCard(
                       category: cat,
+                      highscore: _highscores[cat.categoryKey],
                       onTap: () => _startQuiz(context, cat),
                     );
                   },
@@ -97,9 +133,14 @@ class QuizHomeScreen extends StatelessWidget {
 
 class _CategoryCard extends StatelessWidget {
   final _QuizCategory category;
+  final int? highscore;
   final VoidCallback onTap;
 
-  const _CategoryCard({required this.category, required this.onTap});
+  const _CategoryCard({
+    required this.category,
+    required this.highscore,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +158,30 @@ class _CategoryCard extends StatelessWidget {
               Text(category.emoji, style: const TextStyle(fontSize: 32)),
               const SizedBox(width: 16),
               Expanded(
-                child: Text(
-                  category.title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textDark,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category.title,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      highscore != null
+                          ? 'Bestpunktzahl: $highscore / 5'
+                          : 'Noch kein Highscore',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: highscore != null
+                            ? AppTheme.primary
+                            : Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Icon(
