@@ -26,8 +26,9 @@ class QuizRepository {
     final questions = jsonList
         .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))
         .toList();
-    questions.shuffle(Random());
-    return questions;
+    final rng = Random();
+    questions.shuffle(rng);
+    return questions.map((q) => q.withShuffledAnswers(rng)).toList();
   }
 
   Future<QuizQuestion> loadDailyQuestion() async {
@@ -49,6 +50,12 @@ class QuizRepository {
       );
     }
     all.shuffle(Random(seed));
-    return all.take(count).toList();
+    // Shuffle each question's answers deterministically: seed + position
+    // ensures a stable, per-day answer order while still scrambling options.
+    final selected = all.take(count).toList();
+    return List.generate(
+      selected.length,
+      (i) => selected[i].withShuffledAnswers(Random(seed + i + 1)),
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class QuizQuestion {
   final String id;
   final String category;
@@ -16,6 +18,23 @@ class QuizQuestion {
     required this.correctIndex,
     required this.explanation,
   });
+
+  /// Returns a copy of this question with answers shuffled using [rng].
+  /// The [correctIndex] is updated to reflect the new position of the
+  /// correct answer. All other fields are unchanged.
+  QuizQuestion withShuffledAnswers(Random rng) {
+    final correctAnswer = answers[correctIndex];
+    final shuffled = List<String>.from(answers)..shuffle(rng);
+    return QuizQuestion(
+      id: id,
+      category: category,
+      difficulty: difficulty,
+      question: question,
+      answers: shuffled,
+      correctIndex: shuffled.indexOf(correctAnswer),
+      explanation: explanation,
+    );
+  }
 
   factory QuizQuestion.fromJson(Map<String, dynamic> json) {
     return QuizQuestion(

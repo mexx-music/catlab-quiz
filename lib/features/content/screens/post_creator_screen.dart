@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:catlab_quiz/features/content/data/post_image_export_service.dart';
 import 'package:catlab_quiz/features/content/widgets/post_preview_card.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
@@ -15,6 +17,8 @@ class PostCreatorScreen extends StatefulWidget {
 
 class _PostCreatorScreenState extends State<PostCreatorScreen> {
   final _repo = QuizRepository();
+  final _exportService = PostImageExportService();
+  final _previewKey = GlobalKey();
 
   List<QuizDefinition> _catalog = [];
   QuizDefinition? _selectedQuiz;
@@ -22,6 +26,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
   QuizQuestion? _selectedQuestion;
   bool _loadingCatalog = true;
   bool _loadingQuestions = false;
+  bool _exportingPng = false;
 
   @override
   void initState() {
@@ -76,9 +81,8 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     if (q == null) return;
     await Clipboard.setData(ClipboardData(text: _buildPostText(q)));
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post-Text kopiert')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Post-Text kopiert')));
     }
   }
 
@@ -103,12 +107,87 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
             );
           }
         },
-        // Prepared hooks for later — PNG export, native share, scheduler
-        onExportPng: null,
+        // Prepared hooks — PNG export wired, scheduler/native share for v3
+        onExportPng: () {
+          Navigator.of(sheetCtx).pop();
+          _exportPng(context);
+        },
         onNativeShare: null,
         onExportToScheduler: null,
       ),
     );
+  }
+
+  Future<void> _exportPng(BuildContext context) async {
+    final quiz = _selectedQuiz;
+    final question = _selectedQuestion;
+    if (quiz == null || question == null) return;
+
+    // Capture before async gap
+    final pixelRatio =
+        MediaQuery.of(context).devicePixelRatio.clamp(2.0, 3.0);
+
+    setState(() => _exportingPng = true);
+
+    final bytes = await _exportService.renderToPng(
+      _previewKey,
+      pixelRatio: pixelRatio,
+    );
+
+    if (!context.mounted) return;
+    setState(() => _exportingPng = false);
+
+    if (bytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('PNG-Erzeugung fehlgeschlagen')),
+      );
+      return;
+    }
+
+    final kb = (bytes.lengthInBytes / 1024).toStringAsFixed(1);
+    final filename = _exportService.filenameFor(quiz.id, question.id);
+
+    if (context.mounted) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('PNG wurde erzeugt'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _InfoRow(label: 'Größe', value: '$kb KB'),
+              const SizedBox(height: 4),
+              _InfoRow(label: 'Datei', value: filename),
+              if (kIsWeb) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.download, size: 15),
+                    label: const Text('Herunterladen'),
+                    onPressed: () {
+                      _exportService.downloadOnWeb(filename, bytes);
+                      Navigator.of(ctx).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Schließen'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -137,6 +216,8 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                     ? _ActionButtons(
                         onCopy: () => _copyText(context),
                         onShare: () => _showShareSheet(context),
+                        onExportPng: () => _exportPng(context),
+                        exportingPng: _exportingPng,
                       )
                     : null;
 
@@ -147,6 +228,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                     questions: _questions,
                     selectedQuestion: _selectedQuestion,
                     loadingQuestions: _loadingQuestions,
+                    previewKey: _previewKey,
                     onQuizSelected: _selectQuiz,
                     onQuestionSelected: (q) =>
                         setState(() => _selectedQuestion = q),
@@ -159,6 +241,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                   questions: _questions,
                   selectedQuestion: _selectedQuestion,
                   loadingQuestions: _loadingQuestions,
+                  previewKey: _previewKey,
                   onQuizSelected: _selectQuiz,
                   onQuestionSelected: (q) =>
                       setState(() => _selectedQuestion = q),
@@ -170,43 +253,104 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
   }
 }
 
+// ── Info row (dialog helper) ──────────────────────────────────────────────────
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('$label: ',
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 13)),
+        Expanded(
+          child: Text(value,
+              style:
+                  TextStyle(fontSize: 13, color: Colors.grey.shade700)),
+        ),
+      ],
+    );
+  }
+}
+
 // ── Action buttons ────────────────────────────────────────────────────────────
 
 class _ActionButtons extends StatelessWidget {
   final VoidCallback onCopy;
   final VoidCallback onShare;
+  final VoidCallback onExportPng;
+  final bool exportingPng;
 
-  const _ActionButtons({required this.onCopy, required this.onShare});
+  const _ActionButtons({
+    required this.onCopy,
+    required this.onShare,
+    required this.onExportPng,
+    required this.exportingPng,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              icon: const Icon(Icons.copy, size: 15),
-              label: const Text('Text kopieren',
-                  style: TextStyle(fontSize: 13)),
-              onPressed: onCopy,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.primary,
-                side: const BorderSide(color: AppTheme.primary),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.copy, size: 15),
+                  label: const Text('Text kopieren',
+                      style: TextStyle(fontSize: 13)),
+                  onPressed: onCopy,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.primary,
+                    side: const BorderSide(color: AppTheme.primary),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.share_outlined, size: 15),
+                  label: const Text('Teilen vorbereiten',
+                      style: TextStyle(fontSize: 13)),
+                  onPressed: onShare,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.share_outlined, size: 15),
-              label: const Text('Teilen vorbereiten',
-                  style: TextStyle(fontSize: 13)),
-              onPressed: onShare,
-              style: ElevatedButton.styleFrom(
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              icon: exportingPng
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.image_outlined, size: 15),
+              label: Text(
+                exportingPng ? 'Wird erstellt…' : 'PNG erstellen',
+                style: const TextStyle(fontSize: 13),
+              ),
+              onPressed: exportingPng ? null : onExportPng,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.grey.shade700,
+                side: BorderSide(color: Colors.grey.shade400),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -224,8 +368,6 @@ class _ActionButtons extends StatelessWidget {
 class _ShareSheet extends StatelessWidget {
   final String postText;
   final VoidCallback onCopy;
-
-  // Prepared for v2 — null until implemented
   final VoidCallback? onExportPng;
   final VoidCallback? onNativeShare;
   final VoidCallback? onExportToScheduler;
@@ -260,8 +402,6 @@ class _ShareSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Post text preview
           Container(
             width: double.infinity,
             constraints: const BoxConstraints(maxHeight: 180),
@@ -271,16 +411,12 @@ class _ShareSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: SingleChildScrollView(
-              child: Text(
-                postText,
-                style: const TextStyle(
-                    fontSize: 13, color: AppTheme.textDark),
-              ),
+              child: Text(postText,
+                  style: const TextStyle(
+                      fontSize: 13, color: AppTheme.textDark)),
             ),
           ),
           const SizedBox(height: 14),
-
-          // Hint
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -305,8 +441,6 @@ class _ShareSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-
-          // Platform chips — visual only in v1
           Wrap(
             spacing: 8,
             runSpacing: 6,
@@ -318,8 +452,6 @@ class _ShareSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-
-          // Action buttons
           Row(
             children: [
               Expanded(
@@ -350,6 +482,24 @@ class _ShareSheet extends StatelessWidget {
               ),
             ],
           ),
+          if (onExportPng != null) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.image_outlined, size: 15),
+                label: const Text('PNG erstellen'),
+                onPressed: onExportPng,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.grey.shade700,
+                  side: BorderSide(color: Colors.grey.shade400),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -407,10 +557,8 @@ class _Selectors extends StatelessWidget {
               .map(
                 (q) => DropdownMenuItem(
                   value: q,
-                  child: Text(
-                    '${q.emoji} ${q.title}',
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: Text('${q.emoji} ${q.title}',
+                      overflow: TextOverflow.ellipsis),
                 ),
               )
               .toList(),
@@ -485,14 +633,11 @@ class _SelectorLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: AppTheme.textDark,
-      ),
-    );
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textDark));
   }
 }
 
@@ -514,8 +659,7 @@ class _FormatChip extends StatelessWidget {
           fontWeight: active ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
-      backgroundColor:
-          active ? AppTheme.primary : Colors.grey.shade100,
+      backgroundColor: active ? AppTheme.primary : Colors.grey.shade100,
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: 4),
     );
@@ -558,6 +702,7 @@ class _NarrowLayout extends StatelessWidget {
   final List<QuizQuestion> questions;
   final QuizQuestion? selectedQuestion;
   final bool loadingQuestions;
+  final GlobalKey previewKey;
   final void Function(QuizDefinition) onQuizSelected;
   final void Function(QuizQuestion) onQuestionSelected;
   final Widget? actionButtons;
@@ -568,6 +713,7 @@ class _NarrowLayout extends StatelessWidget {
     required this.questions,
     required this.selectedQuestion,
     required this.loadingQuestions,
+    required this.previewKey,
     required this.onQuizSelected,
     required this.onQuestionSelected,
     required this.actionButtons,
@@ -595,12 +741,16 @@ class _NarrowLayout extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
                 children: [
-                  selectedQuiz != null && selectedQuestion != null
-                      ? PostPreviewCard(
-                          quiz: selectedQuiz!,
-                          question: selectedQuestion!,
-                        )
-                      : _PreviewPlaceholder(),
+                  if (selectedQuiz != null && selectedQuestion != null)
+                    RepaintBoundary(
+                      key: previewKey,
+                      child: PostPreviewCard(
+                        quiz: selectedQuiz!,
+                        question: selectedQuestion!,
+                      ),
+                    )
+                  else
+                    _PreviewPlaceholder(),
                   if (actionButtons != null) actionButtons!,
                 ],
               ),
@@ -621,6 +771,7 @@ class _WideLayout extends StatelessWidget {
   final List<QuizQuestion> questions;
   final QuizQuestion? selectedQuestion;
   final bool loadingQuestions;
+  final GlobalKey previewKey;
   final void Function(QuizDefinition) onQuizSelected;
   final void Function(QuizQuestion) onQuestionSelected;
   final Widget? actionButtons;
@@ -631,6 +782,7 @@ class _WideLayout extends StatelessWidget {
     required this.questions,
     required this.selectedQuestion,
     required this.loadingQuestions,
+    required this.previewKey,
     required this.onQuizSelected,
     required this.onQuestionSelected,
     required this.actionButtons,
@@ -641,15 +793,13 @@ class _WideLayout extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Left panel — selectors
         Container(
           width: 280,
           height: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            border: Border(
-              right: BorderSide(color: Colors.grey.shade200),
-            ),
+            border:
+                Border(right: BorderSide(color: Colors.grey.shade200)),
           ),
           child: SingleChildScrollView(
             child: _Selectors(
@@ -663,7 +813,6 @@ class _WideLayout extends StatelessWidget {
             ),
           ),
         ),
-        // Right panel — preview + actions
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
@@ -672,12 +821,16 @@ class _WideLayout extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: 420),
                 child: Column(
                   children: [
-                    selectedQuiz != null && selectedQuestion != null
-                        ? PostPreviewCard(
-                            quiz: selectedQuiz!,
-                            question: selectedQuestion!,
-                          )
-                        : _PreviewPlaceholder(),
+                    if (selectedQuiz != null && selectedQuestion != null)
+                      RepaintBoundary(
+                        key: previewKey,
+                        child: PostPreviewCard(
+                          quiz: selectedQuiz!,
+                          question: selectedQuestion!,
+                        ),
+                      )
+                    else
+                      _PreviewPlaceholder(),
                     if (actionButtons != null) actionButtons!,
                   ],
                 ),
