@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "category": "cat_breeds",
+    "difficulty": "beginner",
+    "question": "Welche Katzenrasse ist bekannt für ihr blaues, dichtes Fell und ihre grünen Augen?",
+    "answers": ["Britisch Kurzhaar", "Russisch Blau", "Perserkatze", "Ragdoll"],
+    "correctIndex": 1,
+    "explanation": "Die Russisch Blau hat ein charakteristisches blaues Fell und leuchtend grüne Augen."
+  },
+  {
+    "id": "2",
+    "category": "cat_breeds",
+    "difficulty": "beginner",
+    "question": "Welche Katzenrasse ist für ihre schlaffen Muskeln bekannt und wird deshalb 'Ragdoll' genannt?",
+    "answers": ["Maine Coon", "Siamkatze", "Ragdoll", "Abessinierin"],
+    "correctIndex": 2,
+    "explanation": "Ragdolls werden so genannt, weil sie beim Hochheben entspannen wie eine Stoffpuppe."
+  },
+  {
+    "id": "3",
+    "category": "cat_breeds",
+    "difficulty": "beginner",
+    "question": "Welche Katzenrasse gilt als eine der größten Hauskatzen der Welt?",
+    "answers": ["Sphynx", "Maine Coon", "Singapura", "Türkisch Angora"],
+    "correctIndex": 1,
+    "explanation": "Maine Coons können bis zu 8 kg schwer und über 1 Meter lang werden."
+  },
+  {
+    "id": "4",
+    "category": "cat_breeds",
+    "difficulty": "beginner",
+    "question": "Welche Katzenrasse hat kein Fell und fühlt sich warm an?",
+    "answers": ["Devon Rex", "Sphynx", "Scottish Fold", "Bengalkatze"],
+    "correctIndex": 1,
+    "explanation": "Die Sphynx ist eine haarlose Katzenrasse. Ihre Körperwärme ist gut spürbar."
+  },
+  {
+    "id": "5",
+    "category": "cat_breeds",
+    "difficulty": "beginner",
+    "question": "Welche Katzenrasse ist bekannt für ihre nach vorne gefalteten Ohren?",
+    "answers": ["American Curl", "Scottish Fold", "Birma", "Norwegische Waldkatze"],
+    "correctIndex": 1,
+    "explanation": "Die Scottish Fold hat nach vorne und unten gefaltete Ohren durch eine genetische Mutation."
+  }
+]
