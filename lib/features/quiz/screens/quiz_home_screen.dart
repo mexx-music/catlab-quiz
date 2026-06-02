@@ -52,6 +52,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         builder: (_) => QuizPlayScreen(
           questions: questions,
           categoryKey: quiz.id,
+          quizTitle: quiz.title,
         ),
       ),
     );
@@ -66,6 +67,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         builder: (_) => QuizPlayScreen(
           questions: questions,
           categoryKey: 'daily',
+          quizTitle: 'Quiz des Tages',
         ),
       ),
     );
@@ -389,17 +391,23 @@ class _QuizCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: quiz.imageAsset != null
-                  ? Image.asset(
-                      quiz.imageAsset!,
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      errorBuilder: (_, __, ___) =>
-                          _ImagePlaceholder(quiz.emoji),
-                    )
-                  : _ImagePlaceholder(quiz.emoji),
+              child: Builder(
+                builder: (context) {
+                  final w = MediaQuery.sizeOf(context).width;
+                  final h = w >= 1000 ? 200.0 : (w >= 600 ? 180.0 : 150.0);
+                  return quiz.imageAsset != null
+                      ? Image.asset(
+                          quiz.imageAsset!,
+                          width: double.infinity,
+                          height: h,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          errorBuilder: (_, __, ___) =>
+                              _ImagePlaceholder(quiz.emoji, height: h),
+                        )
+                      : _ImagePlaceholder(quiz.emoji, height: h);
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -471,13 +479,14 @@ class _QuizCard extends StatelessWidget {
 
 class _ImagePlaceholder extends StatelessWidget {
   final String emoji;
-  const _ImagePlaceholder(this.emoji);
+  final double height;
+  const _ImagePlaceholder(this.emoji, {this.height = 150});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 100,
+      height: height,
       color: AppTheme.secondary,
       child: Center(
         child: Text(emoji, style: const TextStyle(fontSize: 48)),

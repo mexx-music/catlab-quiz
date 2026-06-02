@@ -8,11 +8,13 @@ import 'package:catlab_quiz/shared/theme/app_theme.dart';
 class QuizPlayScreen extends StatefulWidget {
   final List<QuizQuestion> questions;
   final String categoryKey;
+  final String quizTitle;
 
   const QuizPlayScreen({
     super.key,
     required this.questions,
     required this.categoryKey,
+    required this.quizTitle,
   });
 
   @override
@@ -46,6 +48,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen> {
             score: _score,
             total: widget.questions.length,
             categoryKey: widget.categoryKey,
+            quizTitle: widget.quizTitle,
           ),
         ),
       );

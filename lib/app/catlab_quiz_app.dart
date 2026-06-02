@@ -11,12 +11,16 @@ class CatlabQuizApp extends StatelessWidget {
       title: 'CatLab Quiz',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      builder: (context, child) => Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: child!,
-        ),
-      ),
+      builder: (context, child) {
+        final w = MediaQuery.sizeOf(context).width;
+        final maxWidth = w >= 1000 ? 900.0 : (w >= 600 ? 760.0 : double.infinity);
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: child!,
+          ),
+        );
+      },
       home: const QuizHomeScreen(),
     );
   }
