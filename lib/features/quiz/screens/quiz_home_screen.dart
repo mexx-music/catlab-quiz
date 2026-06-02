@@ -393,8 +393,9 @@ class _QuizCard extends StatelessWidget {
                   ? Image.asset(
                       quiz.imageAsset!,
                       width: double.infinity,
-                      height: 140,
+                      height: 200,
                       fit: BoxFit.cover,
+                      alignment: Alignment.center,
                       errorBuilder: (_, __, ___) =>
                           _ImagePlaceholder(quiz.emoji),
                     )

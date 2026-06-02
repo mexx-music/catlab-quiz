@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cat_breeds",
+    "title": "Katzenrassen Anfänger",
+    "description": "Erkenne beliebte Katzenrassen und ihr Aussehen",
+    "category": "cat_breeds",
+    "emoji": "🐈",
+    "imageAsset": "assets/images/breeds.png",
+    "assetPath": "assets/quiz/cat_breeds_beginner.json",
+    "socialHeadline": "Kennst du die schönsten Katzenrassen?",
+    "socialTeaser": "Teste dein Wissen über beliebte Katzenrassen im CatLab Quiz!",
+    "seoTitle": "Katzenrassen Quiz für Anfänger – Erkennst du diese Katzen?",
+    "seoDescription": "Teste dein Wissen über beliebte Katzenrassen. Von Perser bis Maine Coon – wie gut kennst du die schönsten Katzen der Welt?",
+    "tags": ["katzen", "katzenrassen", "quiz", "katzenwissen", "perser", "mainecoon"]
+  },
+  {
+    "id": "cat_purring",
+    "title": "Warum schnurren Katzen?",
+    "description": "Alles rund ums Schnurren und Katzenlaute",
+    "category": "cat_purring",
+    "emoji": "😸",
+    "imageAsset": "assets/images/purring.png",
+    "assetPath": "assets/quiz/cat_purring.json",
+    "socialHeadline": "Weißt du, warum Katzen schnurren?",
+    "socialTeaser": "Entdecke die Geheimnisse des Katzenschnurrens im CatLab Quiz!",
+    "seoTitle": "Warum schnurren Katzen? Quiz für Katzenfreunde",
+    "seoDescription": "Teste dein Wissen über Schnurren, Katzenlaute und Kommunikation. Was steckt wirklich hinter dem Schnurren?",
+    "tags": ["katzen", "schnurren", "quiz", "katzenwissen", "katzenlaute"]
+  },
+  {
+    "id": "cat_behavior",
+    "title": "Katzenverhalten Basics",
+    "description": "Verstehe, was deine Katze wirklich sagt",
+    "category": "cat_behavior",
+    "emoji": "🐾",
+    "imageAsset": "assets/images/behavior.png",
+    "assetPath": "assets/quiz/cat_behavior.json",
+    "socialHeadline": "Verstehst du deine Katze wirklich?",
+    "socialTeaser": "Teste dein Wissen über Katzenverhalten im CatLab Quiz!",
+    "seoTitle": "Katzenverhalten verstehen – Quiz für Katzenbesitzer",
+    "seoDescription": "Was bedeutet Schwanzwedeln, Kopfbutt oder langsames Blinzeln? Teste dein Wissen über Katzenverhalten.",
+    "tags": ["katzen", "katzenverhalten", "quiz", "katzenwissen", "katzensprache"]
+  },
+  {
+    "id": "cat_myths",
+    "title": "Katzenmythen Challenge",
+    "description": "Stimmt das wirklich? Mythen und Fakten über Katzen",
+    "category": "cat_myths",
+    "emoji": "🔮",
+    "imageAsset": "assets/images/myths.png",
+    "assetPath": "assets/quiz/cat_myths.json",
+    "socialHeadline": "Glaubst du noch an diese Katzenmythen?",
+    "socialTeaser": "Enttarne die größten Katzenmythen im CatLab Quiz!",
+    "seoTitle": "Katzenmythen entlarvt – Stimmt das wirklich?",
+    "seoDescription": "Katzen haben sieben Leben? Katzen sind Einzelgänger? Teste, welche Katzenmythen wahr sind und welche nicht.",
+    "tags": ["katzen", "katzenmythen", "quiz", "katzenwissen", "fakten"]
+  }
+]
