@@ -79,13 +79,11 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             children: [
-              const Text('🐱', style: TextStyle(fontSize: 64)),
-              const SizedBox(height: 8),
               Text(
-                'CatLab Quiz',
+                'CatLab 🐱 Quiz',
                 style: Theme.of(
                   context,
                 ).textTheme.headlineMedium?.copyWith(fontSize: 32),
@@ -157,18 +155,50 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                         child: Center(child: CircularProgressIndicator()),
                       )
                     else
-                      ...List.generate(_catalog.length, (index) {
-                        final quiz = _catalog[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _QuizCard(
-                            quiz: quiz,
-                            highscore: _highscores[quiz.id],
-                            onTap: () => _startQuiz(context, quiz),
-                            onShowPost: () => _showPostSheet(context, quiz),
-                          ),
-                        );
-                      }),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final cols = constraints.maxWidth >= 600 ? 2 : 1;
+                          Widget card(quiz) => _QuizCard(
+                                quiz: quiz,
+                                highscore: _highscores[quiz.id],
+                                onTap: () => _startQuiz(context, quiz),
+                                onShowPost: () =>
+                                    _showPostSheet(context, quiz),
+                              );
+                          if (cols == 1) {
+                            return Column(
+                              children: _catalog
+                                  .map((q) => Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 12),
+                                        child: card(q),
+                                      ))
+                                  .toList(),
+                            );
+                          }
+                          final rows = <Widget>[];
+                          for (var i = 0; i < _catalog.length; i += 2) {
+                            final a = _catalog[i];
+                            final b = i + 1 < _catalog.length
+                                ? _catalog[i + 1]
+                                : null;
+                            rows.add(Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: card(a)),
+                                  const SizedBox(width: 12),
+                                  b != null
+                                      ? Expanded(child: card(b))
+                                      : const Expanded(child: SizedBox()),
+                                ],
+                              ),
+                            ));
+                          }
+                          return Column(children: rows);
+                        },
+                      ),
                   ],
                 ),
               ),
@@ -391,17 +421,17 @@ class _QuizCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: Builder(
-                builder: (context) {
-                  final w = MediaQuery.sizeOf(context).width;
-                  final h = w >= 1000 ? 200.0 : (w >= 600 ? 180.0 : 150.0);
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final cw = constraints.maxWidth;
+                  final h = cw >= 460 ? 200.0 : (cw >= 376 ? 170.0 : 150.0);
                   return quiz.imageAsset != null
                       ? Image.asset(
                           quiz.imageAsset!,
                           width: double.infinity,
                           height: h,
                           fit: BoxFit.cover,
-                          alignment: Alignment.center,
+                          alignment: const Alignment(0, -0.5),
                           errorBuilder: (_, __, ___) =>
                               _ImagePlaceholder(quiz.emoji, height: h),
                         )
