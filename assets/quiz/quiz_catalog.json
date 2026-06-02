@@ -7,7 +7,10 @@
     "emoji": "🐈",
     "assetPath": "assets/quiz/cat_breeds_beginner.json",
     "socialHeadline": "Kennst du die schönsten Katzenrassen?",
-    "socialTeaser": "Teste dein Wissen über beliebte Katzenrassen im CatLab Quiz!"
+    "socialTeaser": "Teste dein Wissen über beliebte Katzenrassen im CatLab Quiz!",
+    "seoTitle": "Katzenrassen Quiz für Anfänger – Erkennst du diese Katzen?",
+    "seoDescription": "Teste dein Wissen über beliebte Katzenrassen. Von Perser bis Maine Coon – wie gut kennst du die schönsten Katzen der Welt?",
+    "tags": ["katzen", "katzenrassen", "quiz", "katzenwissen", "perser", "mainecoon"]
   },
   {
     "id": "cat_purring",
@@ -17,7 +20,10 @@
     "emoji": "😸",
     "assetPath": "assets/quiz/cat_purring.json",
     "socialHeadline": "Weißt du, warum Katzen schnurren?",
-    "socialTeaser": "Entdecke die Geheimnisse des Katzenschnurrens im CatLab Quiz!"
+    "socialTeaser": "Entdecke die Geheimnisse des Katzenschnurrens im CatLab Quiz!",
+    "seoTitle": "Warum schnurren Katzen? Quiz für Katzenfreunde",
+    "seoDescription": "Teste dein Wissen über Schnurren, Katzenlaute und Kommunikation. Was steckt wirklich hinter dem Schnurren?",
+    "tags": ["katzen", "schnurren", "quiz", "katzenwissen", "katzenlaute"]
   },
   {
     "id": "cat_behavior",
@@ -27,7 +33,10 @@
     "emoji": "🐾",
     "assetPath": "assets/quiz/cat_behavior.json",
     "socialHeadline": "Verstehst du deine Katze wirklich?",
-    "socialTeaser": "Teste dein Wissen über Katzenverhalten im CatLab Quiz!"
+    "socialTeaser": "Teste dein Wissen über Katzenverhalten im CatLab Quiz!",
+    "seoTitle": "Katzenverhalten verstehen – Quiz für Katzenbesitzer",
+    "seoDescription": "Was bedeutet Schwanzwedeln, Kopfbutt oder langsames Blinzeln? Teste dein Wissen über Katzenverhalten.",
+    "tags": ["katzen", "katzenverhalten", "quiz", "katzenwissen", "katzensprache"]
   },
   {
     "id": "cat_myths",
@@ -37,6 +46,9 @@
     "emoji": "🔮",
     "assetPath": "assets/quiz/cat_myths.json",
     "socialHeadline": "Glaubst du noch an diese Katzenmythen?",
-    "socialTeaser": "Enttarne die größten Katzenmythen im CatLab Quiz!"
+    "socialTeaser": "Enttarne die größten Katzenmythen im CatLab Quiz!",
+    "seoTitle": "Katzenmythen entlarvt – Stimmt das wirklich?",
+    "seoDescription": "Katzen haben sieben Leben? Katzen sind Einzelgänger? Teste, welche Katzenmythen wahr sind und welche nicht.",
+    "tags": ["katzen", "katzenmythen", "quiz", "katzenwissen", "fakten"]
   }
 ]

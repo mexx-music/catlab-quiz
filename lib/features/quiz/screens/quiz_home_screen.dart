@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
@@ -119,6 +120,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                             quiz: quiz,
                             highscore: _highscores[quiz.id],
                             onTap: () => _startQuiz(context, quiz),
+                            onShowPost: () => _showPostSheet(context, quiz),
                           ),
                         );
                       }),
@@ -192,15 +194,142 @@ class _DailyQuizCard extends StatelessWidget {
   }
 }
 
+void _showPostSheet(BuildContext context, QuizDefinition quiz) {
+  final postText = '🐱 ${quiz.socialHeadline}\n${quiz.socialTeaser}';
+  final hashtags = quiz.tags?.map((t) => '#$t').join(' ') ?? '';
+  final seoText = [
+    if (quiz.seoTitle != null) 'Titel: ${quiz.seoTitle}',
+    if (quiz.seoDescription != null) 'Beschreibung: ${quiz.seoDescription}',
+    if (hashtags.isNotEmpty) hashtags,
+  ].join('\n');
+
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (sheetCtx) => SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(sheetCtx).viewInsets.bottom + 32,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            quiz.title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textDark,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            postText,
+            style: const TextStyle(fontSize: 15, color: AppTheme.textDark),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.copy),
+              label: const Text('Kopieren'),
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: postText));
+                if (context.mounted) {
+                  Navigator.of(sheetCtx).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Post-Text kopiert')),
+                  );
+                }
+              },
+            ),
+          ),
+          if (seoText.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 12),
+            const Text(
+              'SEO-Vorschlag:',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textDark,
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (quiz.seoTitle != null) ...[
+              const Text(
+                'Titel:',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textDark),
+              ),
+              Text(
+                quiz.seoTitle!,
+                style: const TextStyle(fontSize: 13, color: AppTheme.textDark),
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (quiz.seoDescription != null) ...[
+              const Text(
+                'Beschreibung:',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textDark),
+              ),
+              Text(
+                quiz.seoDescription!,
+                style: const TextStyle(fontSize: 13, color: AppTheme.textDark),
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (hashtags.isNotEmpty) ...[
+              const Text(
+                'Tags:',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textDark),
+              ),
+              Text(
+                hashtags,
+                style: const TextStyle(fontSize: 13, color: AppTheme.primary),
+              ),
+              const SizedBox(height: 16),
+            ],
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.copy),
+                label: const Text('Kopieren (SEO)'),
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: seoText));
+                  if (context.mounted) {
+                    Navigator.of(sheetCtx).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('SEO-Text kopiert')),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
+}
+
 class _QuizCard extends StatelessWidget {
   final QuizDefinition quiz;
   final int? highscore;
   final VoidCallback onTap;
+  final VoidCallback onShowPost;
 
   const _QuizCard({
     required this.quiz,
     required this.highscore,
     required this.onTap,
+    required this.onShowPost,
   });
 
   @override
@@ -248,6 +377,20 @@ class _QuizCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: onShowPost,
+                      child: const Text(
+                        'Post-Text anzeigen',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppTheme.primary,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

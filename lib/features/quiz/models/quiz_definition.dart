@@ -7,6 +7,9 @@ class QuizDefinition {
   final String assetPath;
   final String socialHeadline;
   final String socialTeaser;
+  final String? seoTitle;
+  final String? seoDescription;
+  final List<String>? tags;
 
   const QuizDefinition({
     required this.id,
@@ -17,6 +20,9 @@ class QuizDefinition {
     required this.assetPath,
     required this.socialHeadline,
     required this.socialTeaser,
+    this.seoTitle,
+    this.seoDescription,
+    this.tags,
   });
 
   factory QuizDefinition.fromJson(Map<String, dynamic> json) {
@@ -29,6 +35,9 @@ class QuizDefinition {
       assetPath: json['assetPath'] as String,
       socialHeadline: json['socialHeadline'] as String,
       socialTeaser: json['socialTeaser'] as String,
+      seoTitle: json['seoTitle'] as String?,
+      seoDescription: json['seoDescription'] as String?,
+      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
   }
 }
