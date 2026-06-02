@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/content/screens/content_library_screen.dart';
+import 'package:catlab_quiz/features/content/screens/today_screen.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
@@ -89,28 +90,29 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                   context,
                 ).textTheme.headlineMedium?.copyWith(fontSize: 32),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
+              Text(
+                'Wähle einen Quizbogen:',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Wähle einen Quizbogen:',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  _ToolButton(
+                    icon: '📅',
+                    label: 'Heute',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const TodayScreen(),
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  TextButton.icon(
-                    icon: const Text('📰', style: TextStyle(fontSize: 13)),
-                    label: const Text(
-                      'Content',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.primary,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
+                  const SizedBox(width: 4),
+                  _ToolButton(
+                    icon: '📰',
+                    label: 'Content',
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => const ContentLibraryScreen(),
@@ -119,7 +121,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
               Expanded(
                 child: ListView(
                   children: [
@@ -631,6 +633,33 @@ class _DailyQuestionCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ToolButton extends StatelessWidget {
+  final String icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const _ToolButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      icon: Text(icon, style: const TextStyle(fontSize: 13)),
+      label: Text(label, style: const TextStyle(fontSize: 13)),
+      style: TextButton.styleFrom(
+        foregroundColor: AppTheme.primary,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: onPressed,
     );
   }
 }
