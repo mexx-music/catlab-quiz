@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/content/widgets/post_preview_card.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
@@ -55,8 +56,68 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     }
   }
 
+  // ── Post text ─────────────────────────────────────────────────────────────
+
+  static const _labels = ['A', 'B', 'C', 'D'];
+
+  // Prepared for v2: add PostFormat param to switch between questionPost / answerPost
+  static String _buildPostText(QuizQuestion q) {
+    final answers = List.generate(
+      q.answers.length,
+      (i) => '${_labels[i]}) ${q.answers[i]}',
+    ).join('\n');
+    return '🐱 Katzenfrage\n\n${q.question}\n\n$answers\n\nWas denkst du?\n\nMehr:\nquiz.schnurrpurr.com';
+  }
+
+  // ── Actions ───────────────────────────────────────────────────────────────
+
+  Future<void> _copyText(BuildContext context) async {
+    final q = _selectedQuestion;
+    if (q == null) return;
+    await Clipboard.setData(ClipboardData(text: _buildPostText(q)));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post-Text kopiert')),
+      );
+    }
+  }
+
+  void _showShareSheet(BuildContext context) {
+    final q = _selectedQuestion;
+    if (q == null) return;
+    final postText = _buildPostText(q);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => _ShareSheet(
+        postText: postText,
+        onCopy: () async {
+          await Clipboard.setData(ClipboardData(text: postText));
+          if (context.mounted) {
+            Navigator.of(sheetCtx).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Post-Text kopiert')),
+            );
+          }
+        },
+        // Prepared hooks for later — PNG export, native share, scheduler
+        onExportPng: null,
+        onNativeShare: null,
+        onExportToScheduler: null,
+      ),
+    );
+  }
+
+  // ── Build ─────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
+    final hasSelection =
+        _selectedQuiz != null && _selectedQuestion != null;
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: AppTheme.textDark),
@@ -72,6 +133,13 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
           ? const Center(child: CircularProgressIndicator())
           : LayoutBuilder(
               builder: (context, constraints) {
+                final actions = hasSelection
+                    ? _ActionButtons(
+                        onCopy: () => _copyText(context),
+                        onShare: () => _showShareSheet(context),
+                      )
+                    : null;
+
                 if (constraints.maxWidth >= 600) {
                   return _WideLayout(
                     catalog: _catalog,
@@ -82,6 +150,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                     onQuizSelected: _selectQuiz,
                     onQuestionSelected: (q) =>
                         setState(() => _selectedQuestion = q),
+                    actionButtons: actions,
                   );
                 }
                 return _NarrowLayout(
@@ -93,9 +162,211 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
                   onQuizSelected: _selectQuiz,
                   onQuestionSelected: (q) =>
                       setState(() => _selectedQuestion = q),
+                  actionButtons: actions,
                 );
               },
             ),
+    );
+  }
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+
+class _ActionButtons extends StatelessWidget {
+  final VoidCallback onCopy;
+  final VoidCallback onShare;
+
+  const _ActionButtons({required this.onCopy, required this.onShare});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.copy, size: 15),
+              label: const Text('Text kopieren',
+                  style: TextStyle(fontSize: 13)),
+              onPressed: onCopy,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primary,
+                side: const BorderSide(color: AppTheme.primary),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.share_outlined, size: 15),
+              label: const Text('Teilen vorbereiten',
+                  style: TextStyle(fontSize: 13)),
+              onPressed: onShare,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Share sheet ───────────────────────────────────────────────────────────────
+
+class _ShareSheet extends StatelessWidget {
+  final String postText;
+  final VoidCallback onCopy;
+
+  // Prepared for v2 — null until implemented
+  final VoidCallback? onExportPng;
+  final VoidCallback? onNativeShare;
+  final VoidCallback? onExportToScheduler;
+
+  const _ShareSheet({
+    required this.postText,
+    required this.onCopy,
+    this.onExportPng,
+    this.onNativeShare,
+    this.onExportToScheduler,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 32,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Teilen vorbereiten',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textDark,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Post text preview
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxHeight: 180),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.secondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: SingleChildScrollView(
+              child: Text(
+                postText,
+                style: const TextStyle(
+                    fontSize: 13, color: AppTheme.textDark),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Hint
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.blue.shade100),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline,
+                    size: 16, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Text kopieren und in Facebook, Instagram, Threads oder Pinterest einfügen.',
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.blue.shade700),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Platform chips — visual only in v1
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: const [
+              _PlatformChip('📘 Facebook'),
+              _PlatformChip('📷 Instagram'),
+              _PlatformChip('🧵 Threads'),
+              _PlatformChip('📌 Pinterest'),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey.shade600,
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text('Abbrechen'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.copy, size: 15),
+                  label: const Text('Text kopieren'),
+                  onPressed: onCopy,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlatformChip extends StatelessWidget {
+  final String label;
+  const _PlatformChip(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      label: Text(label, style: const TextStyle(fontSize: 11)),
+      backgroundColor: Colors.grey.shade100,
+      side: BorderSide.none,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
     );
   }
 }
@@ -126,7 +397,6 @@ class _Selectors extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Quiz selector
         _SelectorLabel('Quizbogen'),
         const SizedBox(height: 6),
         DropdownButtonFormField<QuizDefinition>(
@@ -149,8 +419,6 @@ class _Selectors extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-
-        // Question selector
         _SelectorLabel('Frage'),
         const SizedBox(height: 6),
         if (loadingQuestions)
@@ -180,15 +448,14 @@ class _Selectors extends StatelessWidget {
             },
           ),
         const SizedBox(height: 20),
-
-        // Format selector — v1 label only, prepared for v2
         _SelectorLabel('Format'),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           children: [
             _FormatChip(label: '🐱 Frage-Post', active: true),
-            _FormatChip(label: '✅ Auflösung', active: false, comingSoon: true),
+            _FormatChip(
+                label: '✅ Auflösung', active: false, comingSoon: true),
           ],
         ),
       ],
@@ -270,7 +537,7 @@ class _PreviewPlaceholder extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('🖼', style: const TextStyle(fontSize: 48)),
+          const Text('🖼', style: TextStyle(fontSize: 48)),
           const SizedBox(height: 12),
           Text(
             'Quizbogen und Frage wählen\num die Vorschau zu sehen.',
@@ -293,6 +560,7 @@ class _NarrowLayout extends StatelessWidget {
   final bool loadingQuestions;
   final void Function(QuizDefinition) onQuizSelected;
   final void Function(QuizQuestion) onQuestionSelected;
+  final Widget? actionButtons;
 
   const _NarrowLayout({
     required this.catalog,
@@ -302,6 +570,7 @@ class _NarrowLayout extends StatelessWidget {
     required this.loadingQuestions,
     required this.onQuizSelected,
     required this.onQuestionSelected,
+    required this.actionButtons,
   });
 
   @override
@@ -324,12 +593,17 @@ class _NarrowLayout extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
-              child: selectedQuiz != null && selectedQuestion != null
-                  ? PostPreviewCard(
-                      quiz: selectedQuiz!,
-                      question: selectedQuestion!,
-                    )
-                  : _PreviewPlaceholder(),
+              child: Column(
+                children: [
+                  selectedQuiz != null && selectedQuestion != null
+                      ? PostPreviewCard(
+                          quiz: selectedQuiz!,
+                          question: selectedQuestion!,
+                        )
+                      : _PreviewPlaceholder(),
+                  if (actionButtons != null) actionButtons!,
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -349,6 +623,7 @@ class _WideLayout extends StatelessWidget {
   final bool loadingQuestions;
   final void Function(QuizDefinition) onQuizSelected;
   final void Function(QuizQuestion) onQuestionSelected;
+  final Widget? actionButtons;
 
   const _WideLayout({
     required this.catalog,
@@ -358,6 +633,7 @@ class _WideLayout extends StatelessWidget {
     required this.loadingQuestions,
     required this.onQuizSelected,
     required this.onQuestionSelected,
+    required this.actionButtons,
   });
 
   @override
@@ -387,19 +663,24 @@ class _WideLayout extends StatelessWidget {
             ),
           ),
         ),
-        // Right panel — preview
+        // Right panel — preview + actions
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 420),
-                child: selectedQuiz != null && selectedQuestion != null
-                    ? PostPreviewCard(
-                        quiz: selectedQuiz!,
-                        question: selectedQuestion!,
-                      )
-                    : _PreviewPlaceholder(),
+                child: Column(
+                  children: [
+                    selectedQuiz != null && selectedQuestion != null
+                        ? PostPreviewCard(
+                            quiz: selectedQuiz!,
+                            question: selectedQuestion!,
+                          )
+                        : _PreviewPlaceholder(),
+                    if (actionButtons != null) actionButtons!,
+                  ],
+                ),
               ),
             ),
           ),
