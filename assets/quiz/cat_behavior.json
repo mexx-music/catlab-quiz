@@ -1,47 +1,27 @@
 [
-  {
-    "id": "b1",
-    "category": "cat_behavior",
-    "difficulty": "beginner",
-    "question": "Warum reibt eine Katze ihren Kopf an dir?",
-    "answers": ["Sie hat Hunger", "Sie markiert dich mit ihrem Duft", "Sie will spielen", "Sie ist krank"],
-    "correctIndex": 1,
-    "explanation": "Katzen haben Duftdrüsen am Kopf und markieren so ihr Revier und ihre Lieblingsmenschen."
-  },
-  {
-    "id": "b2",
-    "category": "cat_behavior",
-    "difficulty": "beginner",
-    "question": "Was bedeutet es, wenn eine Katze den Schwanz aufrecht hält?",
-    "answers": ["Sie ist ängstlich", "Sie will angreifen", "Sie ist entspannt und freundlich", "Sie ist krank"],
-    "correctIndex": 2,
-    "explanation": "Ein aufrecht gehaltener Schwanz signalisiert Selbstbewusstsein und freundliche Stimmung."
-  },
-  {
-    "id": "b3",
-    "category": "cat_behavior",
-    "difficulty": "beginner",
-    "question": "Warum bringt eine Katze manchmal tote Tiere mit?",
-    "answers": ["Sie ist böse", "Sie bringt dir ein Geschenk", "Sie ist verwirrt", "Sie hat Angst"],
-    "correctIndex": 1,
-    "explanation": "Katzen bringen ihrer Familie Beute als Fürsorge und Geschenk, ähnlich wie in der Wildnis."
-  },
-  {
-    "id": "b4",
-    "category": "cat_behavior",
-    "difficulty": "beginner",
-    "question": "Was bedeutet es, wenn eine Katze blinzelt und dabei die Augen langsam schließt?",
-    "answers": ["Sie ist aggressiv", "Sie zeigt Zuneigung", "Sie ist schläfrig", "Sie ist krank"],
-    "correctIndex": 1,
-    "explanation": "Langsames Blinzeln ist ein Zeichen von Vertrauen und Zuneigung – auch 'Katzenküsse' genannt."
-  },
-  {
-    "id": "b5",
-    "category": "cat_behavior",
-    "difficulty": "beginner",
-    "question": "Warum knetet eine Katze weiche Oberflächen mit den Pfoten?",
-    "answers": ["Sie trainiert ihre Muskeln", "Sie sucht Flöhe", "Es ist ein Beruhigungsverhalten aus der Kittenzeit", "Sie will kratzen"],
-    "correctIndex": 2,
-    "explanation": "Das Kneten stammt aus der Kittenzeit, als sie so Milch bei der Mutter stimulierten – es beruhigt sie."
-  }
+  {"id":"beh01","category":"cat_behavior","difficulty":"easy","question":"Warum reibt eine Katze ihren Kopf an dir?","answers":["Sie hat Hunger","Sie markiert dich mit ihrem Duft","Sie will spielen","Sie ist krank"],"correctIndex":1,"explanation":"Katzen haben Duftdrüsen am Kopf und markieren so ihr Revier und ihre Lieblingsmenschen."},
+  {"id":"beh02","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze den Schwanz aufrecht hält?","answers":["Sie ist ängstlich","Sie will angreifen","Sie ist entspannt und freundlich","Sie ist krank"],"correctIndex":2,"explanation":"Ein aufrecht gehaltener Schwanz signalisiert Selbstbewusstsein und freundliche Stimmung."},
+  {"id":"beh03","category":"cat_behavior","difficulty":"easy","question":"Warum bringt eine Katze manchmal tote Tiere mit?","answers":["Sie ist böse","Sie bringt dir ein Geschenk","Sie ist verwirrt","Sie hat Angst"],"correctIndex":1,"explanation":"Katzen bringen ihrer Familie Beute als Fürsorge und Geschenk, ähnlich wie in der Wildnis."},
+  {"id":"beh04","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet langsames Blinzeln einer Katze?","answers":["Sie ist aggressiv","Sie zeigt Zuneigung","Sie ist schläfrig","Sie ist krank"],"correctIndex":1,"explanation":"Langsames Blinzeln ist ein Zeichen von Vertrauen und Zuneigung – auch 'Katzenküsse' genannt."},
+  {"id":"beh05","category":"cat_behavior","difficulty":"easy","question":"Warum knetet eine Katze weiche Oberflächen mit den Pfoten?","answers":["Sie trainiert ihre Muskeln","Sie sucht Flöhe","Es ist ein Beruhigungsverhalten aus der Kittenzeit","Sie will kratzen"],"correctIndex":2,"explanation":"Das Kneten stammt aus der Kittenzeit, als sie so Milch bei der Mutter stimulierten."},
+  {"id":"beh06","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze die Ohren flach anlegt?","answers":["Sie schläft gleich","Sie ist neugierig","Sie ist ängstlich oder aggressiv","Sie will spielen"],"correctIndex":2,"explanation":"Flach angelegte Ohren signalisieren Angst, Stress oder Aggressionsbereitschaft."},
+  {"id":"beh07","category":"cat_behavior","difficulty":"easy","question":"Warum dreht eine Katze dir den Rücken zu und zeigt den Hintern?","answers":["Sie mag dich nicht","Sie zeigt Vertrauen und Freundschaft","Sie sucht etwas","Sie ist krank"],"correctIndex":1,"explanation":"Eine Katze, die dir ihren Hintern zeigt, vertraut dir – das ist ein freundliches Zeichen unter Katzen."},
+  {"id":"beh08","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet ein aufgeplusterter Schwanz?","answers":["Die Katze ist glücklich","Die Katze ist erschrocken oder bedroht","Die Katze hat Hunger","Die Katze will schlafen"],"correctIndex":1,"explanation":"Ein buschiger Schwanz zeigt Aufregung, Erschrecken oder Bedrohungsgefühl."},
+  {"id":"beh09","category":"cat_behavior","difficulty":"easy","question":"Warum kratzen Katzen an Möbeln?","answers":["Nur aus Bosheit","Um Krallen zu pflegen und Duftmarken zu hinterlassen","Weil sie Hunger haben","Weil sie spielen wollen"],"correctIndex":1,"explanation":"Kratzen dient der Krallenpflege, dem Strecken und dem Hinterlassen von Duft- und Sichtmarken."},
+  {"id":"beh10","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze mit dem Schwanz wedelt?","answers":["Sie ist glücklich","Sie ist reizbar oder frustriert","Sie schläft bald","Sie will spielen"],"correctIndex":1,"explanation":"Anders als bei Hunden zeigt Schwanzwedeln bei Katzen oft Gereiztheit oder Ungeduld."},
+  {"id":"beh11","category":"cat_behavior","difficulty":"easy","question":"Warum rollen Katzen sich auf dem Rücken?","answers":["Sie wollen immer gestreichelt werden","Sie zeigen Vertrauen und Entspannung","Sie haben Rückenschmerzen","Sie spielen Versteck"],"correctIndex":1,"explanation":"Auf dem Rücken rollen zeigt, dass sich eine Katze sicher und entspannt fühlt – es ist kein garantiertes Streichelangebot."},
+  {"id":"beh12","category":"cat_behavior","difficulty":"easy","question":"Warum schläft eine Katze so viel?","answers":["Weil sie faul ist","Weil Schlaf ihren Energiebedarf als Jäger deckt","Weil sie krank ist","Weil sie sich langweilt"],"correctIndex":1,"explanation":"Katzen schlafen 12–16 Stunden täglich, um Energie für die Jagd zu sparen – ein Instinkt aus der Wildnis."},
+  {"id":"beh13","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze dir auf den Schoß springt?","answers":["Sie will Futter","Sie sucht Wärme und Nähe","Sie ist krank","Sie will spielen"],"correctIndex":1,"explanation":"Katzen suchen Wärme, Sicherheit und soziale Nähe – ein Schoß bietet beides."},
+  {"id":"beh14","category":"cat_behavior","difficulty":"easy","question":"Warum starren Katzen manchmal in die Leere?","answers":["Sie sind krank","Sie nehmen Geräusche oder Bewegungen wahr, die wir nicht hören oder sehen","Sie halluzinieren","Sie sind traurig"],"correctIndex":1,"explanation":"Katzen haben sehr feines Gehör und sehen Bewegungen bei schwachem Licht – sie reagieren auf für uns unsichtbare Reize."},
+  {"id":"beh15","category":"cat_behavior","difficulty":"easy","question":"Was tut eine Katze, wenn sie jemanden als Freund akzeptiert?","answers":["Sie ignoriert ihn komplett","Sie macht langsame Augenkontakte und reibt sich an ihm","Sie beißt ihn leicht","Sie bringt ihr Spielzeug"],"correctIndex":1,"explanation":"Langsames Blinzeln und Reiben am Menschen oder an anderen Katzen ist ein klares Freundschaftssignal."},
+  {"id":"beh16","category":"cat_behavior","difficulty":"easy","question":"Warum miauen Katzen bei Menschen, aber kaum bei anderen Katzen?","answers":["Weil sie mit Katzen nicht sprechen können","Weil Miauen ein speziell für Menschen entwickeltes Kommunikationsmittel ist","Weil Katzen schüchtern sind","Weil Menschen taub für Katzenlaute sind"],"correctIndex":1,"explanation":"Erwachsene Katzen miauen in der Natur kaum – das Miauen ist laut Forschung eine angepasste Kommunikation mit Menschen."},
+  {"id":"beh17","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze Zähne zeigt und zischt?","answers":["Sie begrüßt dich","Sie ist in Stimmung zum Spielen","Sie fühlt sich bedroht und warnt","Sie hat Hunger"],"correctIndex":2,"explanation":"Zischen und Zähne zeigen ist eine deutliche Warnung: 'Bleib weg, ich fühle mich bedroht!'"},
+  {"id":"beh18","category":"cat_behavior","difficulty":"easy","question":"Warum trinken manche Katzen lieber aus fließendem Wasser?","answers":["Weil sie verwöhnt sind","Weil Instinkt sie lehrt, dass fließendes Wasser frischer ist","Weil sie Angst vor Schüsseln haben","Weil stilles Wasser zu kalt ist"],"correctIndex":1,"explanation":"Instinktiv bevorzugen Katzen fließendes Wasser, da stehendes Wasser in der Natur oft verunreinigt sein kann."},
+  {"id":"beh19","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze mit dem Hinterkopf an dich stößt?","answers":["Sie hat Kopfschmerzen","Sie zeigt Zuneigung und Vertrauen","Sie will, dass du weggehst","Sie hat Hunger"],"correctIndex":1,"explanation":"Den Kopf an einen Menschen stoßen ('Headbutt') ist ein eindeutiges Zeichen von Zuneigung bei Katzen."},
+  {"id":"beh20","category":"cat_behavior","difficulty":"easy","question":"Warum spielen Katzen gerne mit kleinen, beweglichen Dingen?","answers":["Aus Langeweile","Es trainiert ihren Jagdinstinkt","Sie sammeln Gegenstände","Es macht ihnen Angst"],"correctIndex":1,"explanation":"Spielen ist für Katzen Jagdtraining – Bewegungen kleiner Objekte ahmen Beutetiere nach."},
+  {"id":"beh21","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze die Pfoten einzieht und locker dasitzt?","answers":["Sie ist krank","Sie ist entspannt und fühlt sich sicher","Sie schläft gleich","Sie friert"],"correctIndex":1,"explanation":"Eingezogene Pfoten ('Katzenbrötchen') zeigen, dass die Katze entspannt und sicher ist – kein Fluchtreflex nötig."},
+  {"id":"beh22","category":"cat_behavior","difficulty":"easy","question":"Warum lecken Katzen sich so oft das Fell?","answers":["Weil es juckt","Zur Pflege, Thermoregulation und Beruhigung","Weil das Fell nass wurde","Weil sie Hunger haben"],"correctIndex":1,"explanation":"Fellpflege (Grooming) dient der Sauberkeit, Temperaturregulierung und ist außerdem beruhigend."},
+  {"id":"beh23","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze ihren Schwanz um dein Bein wickelt?","answers":["Sie will dich beißen","Sie zeigt Zuneigung","Sie warnt dich","Sie hat Hunger"],"correctIndex":1,"explanation":"Den Schwanz um ein Bein zu wickeln ist eine Geste der Zuneigung – ähnlich wie Händchenhalten."},
+  {"id":"beh24","category":"cat_behavior","difficulty":"easy","question":"Warum vergraben Katzen ihren Kot?","answers":["Weil sie ordentlich sind","Um Geruchsspuren zu verstecken und Fressfeinde nicht anzulocken","Weil sie Angst vor ihrem eigenen Kot haben","Weil es Spaß macht"],"correctIndex":1,"explanation":"In der Wildnis vergraben schwächere Katzen Kot, um Raubtiere nicht anzulocken. Dieses Instinktverhalten blieb erhalten."},
+  {"id":"beh25","category":"cat_behavior","difficulty":"easy","question":"Was bedeutet es, wenn eine Katze ihre Zunge kurz herausstreckt und dann wieder einzieht?","answers":["Sie ist krank","Sie hat vergessen, sich abzulecken – 'Blep'","Sie zeigt Aggression","Sie hat etwas Schlechtes gegessen"],"correctIndex":1,"explanation":"Das 'Blep' (kurz herausgestreckte Zunge) entsteht meist beim Entspannen, wenn die Katze die Zunge nach dem Fellpflegen vergisst einzuziehen."}
 ]

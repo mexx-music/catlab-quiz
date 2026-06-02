@@ -1,47 +1,27 @@
 [
-  {
-    "id": "m1",
-    "category": "cat_myths",
-    "difficulty": "beginner",
-    "question": "Stimmt es, dass Katzen immer auf den Pfoten landen?",
-    "answers": ["Ja, immer ohne Ausnahme", "Nein, das ist ein Mythos", "Nur bei kleinen Höhen", "Nur bei großen Höhen"],
-    "correctIndex": 2,
-    "explanation": "Katzen haben einen ausgeprägten Drehmechanismus, landen meist auf den Pfoten – aber nicht immer und nicht aus jeder Höhe."
-  },
-  {
-    "id": "m2",
-    "category": "cat_myths",
-    "difficulty": "beginner",
-    "question": "Haben Katzen wirklich neun Leben?",
-    "answers": ["Ja, wissenschaftlich bewiesen", "Nein, es ist ein kultureller Mythos", "Nur in manchen Ländern", "Nur Hauskatzen"],
-    "correctIndex": 1,
-    "explanation": "Neun Leben ist ein Sprichwort für die Überlebensfähigkeit von Katzen – biologisch haben sie natürlich nur eines."
-  },
-  {
-    "id": "m3",
-    "category": "cat_myths",
-    "difficulty": "beginner",
-    "question": "Sehen Katzen in völliger Dunkelheit?",
-    "answers": ["Ja, sie brauchen kein Licht", "Nein, sie brauchen etwas Restlicht", "Nur im Freien", "Nur junge Katzen"],
-    "correctIndex": 1,
-    "explanation": "Katzen sehen bei sehr schwachem Licht sehr gut, aber in völliger Dunkelheit können auch sie nichts sehen."
-  },
-  {
-    "id": "m4",
-    "category": "cat_myths",
-    "difficulty": "beginner",
-    "question": "Sind alle dreifarbigen Katzen weiblich?",
-    "answers": ["Ja, immer", "Meistens, aber es gibt sehr seltene Ausnahmen", "Nein, etwa die Hälfte ist männlich", "Nur bei bestimmten Rassen"],
-    "correctIndex": 1,
-    "explanation": "Dreifarbige (Schildpatt-)Katzen sind fast ausschließlich weiblich, weil die Fellfarbe X-chromosomal vererbt wird. Männliche Exemplare sind extrem selten."
-  },
-  {
-    "id": "m5",
-    "category": "cat_myths",
-    "difficulty": "beginner",
-    "question": "Stimmt es, dass Katzen Milch lieben und sie gut vertragen?",
-    "answers": ["Ja, Milch ist perfekt für Katzen", "Nein, viele Katzen sind laktoseintolerant", "Nur Katzenmilch ist gut", "Nur Kitten vertragen Milch"],
-    "correctIndex": 1,
-    "explanation": "Viele erwachsene Katzen sind laktoseintolerant. Kuhmilch kann bei ihnen Verdauungsprobleme verursachen."
-  }
+  {"id":"myt01","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer auf den Pfoten landen?","answers":["Ja, immer ohne Ausnahme","Nein, das ist ein Mythos","Meistens, aber nicht immer","Nur bei kleinen Höhen"],"correctIndex":2,"explanation":"Katzen haben einen ausgeprägten Drehmechanismus und landen meist auf den Pfoten – aber nicht immer und nicht aus jeder Höhe."},
+  {"id":"myt02","category":"cat_myths","difficulty":"easy","question":"Haben Katzen wirklich neun Leben?","answers":["Ja, wissenschaftlich bewiesen","Nein, es ist ein kultureller Mythos","Nur in manchen Ländern","Nur Hauskatzen"],"correctIndex":1,"explanation":"Neun Leben ist ein Sprichwort für die Überlebensfähigkeit von Katzen – biologisch haben sie nur eines."},
+  {"id":"myt03","category":"cat_myths","difficulty":"easy","question":"Sehen Katzen in völliger Dunkelheit?","answers":["Ja, sie brauchen kein Licht","Nein, sie brauchen etwas Restlicht","Nur im Freien","Nur junge Katzen"],"correctIndex":1,"explanation":"Katzen sehen bei sehr schwachem Licht sehr gut, aber in völliger Dunkelheit können auch sie nichts sehen."},
+  {"id":"myt04","category":"cat_myths","difficulty":"easy","question":"Sind alle dreifarbigen Katzen weiblich?","answers":["Ja, immer","Meistens, männliche Exemplare sind sehr selten","Nein, die Hälfte ist männlich","Nur bei bestimmten Rassen"],"correctIndex":1,"explanation":"Dreifarbige Katzen sind fast ausschließlich weiblich, weil die Fellfarbe X-chromosomal vererbt wird. Männliche Exemplare sind extrem selten."},
+  {"id":"myt05","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen Milch lieben und sie gut vertragen?","answers":["Ja, Milch ist perfekt für Katzen","Nein, viele Katzen sind laktoseintolerant","Nur Katzenmilch ist gut","Nur Kitten vertragen Milch"],"correctIndex":1,"explanation":"Viele erwachsene Katzen sind laktoseintolerant. Kuhmilch kann bei ihnen Verdauungsprobleme verursachen."},
+  {"id":"myt06","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass schwarze Katzen Unglück bringen?","answers":["Ja, das ist wissenschaftlich bewiesen","Nein, das ist ein Aberglaube","Nur in bestimmten Ländern","Nur bei Nacht"],"correctIndex":1,"explanation":"Der Aberglaube über schwarze Katzen variiert kulturell – in manchen Ländern gelten sie als Glücksbringer."},
+  {"id":"myt07","category":"cat_myths","difficulty":"easy","question":"Können Katzen nur Farben in Graustufen sehen?","answers":["Ja, alles ist grau","Nein, sie sehen Farben, aber weniger lebhaft als Menschen","Sie sehen keine Farben","Sie sehen mehr Farben als Menschen"],"correctIndex":1,"explanation":"Katzen sehen Farben, sind aber nicht so farbempfindlich wie Menschen. Blau und Gelb erkennen sie gut, Rot weniger."},
+  {"id":"myt08","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer unabhängig und nicht sozial sind?","answers":["Ja, Katzen sind Einzelgänger","Nein, viele Katzen sind sehr sozial und suchen Nähe","Nur bestimmte Rassen sind sozial","Nur Katzenbabys sind sozial"],"correctIndex":1,"explanation":"Katzen sind soziale Tiere, die Bindungen eingehen können – sowohl zu Menschen als auch zu anderen Katzen."},
+  {"id":"myt09","category":"cat_myths","difficulty":"easy","question":"Haben Katzen wirklich 7 Sinne?","answers":["Ja, sieben beweisbare Sinne","Nein, sie haben 5 Grundsinne plus besondere Fähigkeiten wie Gleichgewicht","Nur 3 Sinne","Mehr als 10 Sinne"],"correctIndex":1,"explanation":"Katzen haben 5 Grundsinne, ergänzt durch besondere Fähigkeiten wie Gleichgewichtssinn und Infraschallwahrnehmung."},
+  {"id":"myt10","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen kein Wasser mögen?","answers":["Ja, alle Katzen hassen Wasser","Nein, manche Rassen lieben Wasser","Katzen sind wasserunfähig","Katzen können nicht schwimmen"],"correctIndex":1,"explanation":"Viele Katzen meiden Wasser, manche Rassen (z. B. Türkisch Van, Maine Coon) schwimmen aber gerne."},
+  {"id":"myt11","category":"cat_myths","difficulty":"easy","question":"Können Katzen Erdbeben vorhersagen?","answers":["Ja, mit 100 % Genauigkeit","Sie reagieren auf Vorsignale, können aber nicht zuverlässig vorhersagen","Nein, das ist Unsinn","Nur bei großen Erdbeben"],"correctIndex":1,"explanation":"Katzen reagieren möglicherweise auf Infraschall oder Bodenvibrationen vor Erdbeben, aber eine zuverlässige Vorhersage ist wissenschaftlich nicht bestätigt."},
+  {"id":"myt12","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer auf ihre Besitzer herabschauen?","answers":["Ja, sie sind arrogant","Nein, Katzen können enge Bindungen zu Menschen eingehen","Nur bei teuren Rassen","Nur wenn sie Hunger haben"],"correctIndex":1,"explanation":"Studien zeigen, dass Katzen echte emotionale Bindungen zu Menschen entwickeln können."},
+  {"id":"myt13","category":"cat_myths","difficulty":"easy","question":"Ist Knoblauch für Katzen giftig?","answers":["Nein, in kleinen Mengen ist es ok","Ja, Knoblauch ist für Katzen giftig","Nur gekochter Knoblauch ist gefährlich","Nur roher Knoblauch ist gefährlich"],"correctIndex":1,"explanation":"Knoblauch (wie auch Zwiebeln) ist für Katzen giftig und kann die roten Blutkörperchen schädigen."},
+  {"id":"myt14","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen niemals trainierbar sind?","answers":["Ja, Katzen sind nicht trainierbar","Nein, Katzen können mit positiver Verstärkung trainiert werden","Nur bestimmte Rassen sind trainierbar","Nur Katzenbabys lassen sich trainieren"],"correctIndex":1,"explanation":"Mit positiver Verstärkung können Katzen viele Tricks und Verhaltensweisen erlernen."},
+  {"id":"myt15","category":"cat_myths","difficulty":"easy","question":"Können Katzen Schokolade essen?","answers":["Ja, kleine Mengen sind ok","Nein, Schokolade ist für Katzen giftig","Nur weiße Schokolade ist erlaubt","Nur dunkle Schokolade ist gefährlich"],"correctIndex":1,"explanation":"Schokolade enthält Theobromin, das für Katzen (und Hunde) giftig ist."},
+  {"id":"myt16","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer auf Bäume klettern können, aber nicht herunter?","answers":["Ja, das stimmt immer","Nein, die meisten Katzen klettern auch herunter","Nur alte Katzen kommen nicht herunter","Nur große Rassen haben Probleme"],"correctIndex":1,"explanation":"Die meisten Katzen können auch von Bäumen herunterklettern – manchmal zögern sie nur, weil sie sich unsicher fühlen."},
+  {"id":"myt17","category":"cat_myths","difficulty":"easy","question":"Haben weiße Katzen mit blauen Augen häufig Hörschwierigkeiten?","answers":["Nein, das ist ein Mythos","Ja, das ist eine bekannte genetische Verbindung","Nur bei männlichen Katzen","Nur bei sehr alten Katzen"],"correctIndex":1,"explanation":"Weiße Katzen mit blauen Augen haben genetisch bedingt ein erhöhtes Risiko für Taubheit."},
+  {"id":"myt18","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen 9 Monate trächtig sind wie Menschen?","answers":["Ja, etwa 9 Monate","Nein, die Trächtigkeit dauert nur etwa 63–65 Tage","Etwa 6 Monate","Nur 1 Monat"],"correctIndex":1,"explanation":"Katzen sind etwa 63–65 Tage (rund 9 Wochen) trächtig."},
+  {"id":"myt19","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen keine Süßigkeiten mögen, weil sie keine Süße schmecken?","answers":["Nein, sie lieben Zucker","Ja, Katzen haben keine Süßrezeptoren auf der Zunge","Nur bestimmte Rassen schmecken Süßes","Nur Katzenbabys schmecken Süßes"],"correctIndex":1,"explanation":"Katzen fehlen die Geschmacksrezeptoren für Süße – sie können keine süßen Geschmäcker wahrnehmen."},
+  {"id":"myt20","category":"cat_myths","difficulty":"easy","question":"Können Katzen Menschen an ihrem Herzschlag erkennen?","answers":["Nein, unmöglich","Ja, ihr feines Gehör kann Herzgeräusche in der Nähe wahrnehmen","Nur taube Katzen","Nur im Schlaf"],"correctIndex":1,"explanation":"Katzen haben sehr feines Gehör und können laut Studien Herzgeräusche wahrnehmen."},
+  {"id":"myt21","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen giftige Pflanzen immer erkennen und meiden?","answers":["Ja, Katzen wissen instinktiv was giftig ist","Nein, Katzen können giftige Pflanzen fressen und sich vergiften","Nur ältere Katzen erkennen Gifte","Nur Wildkatzen meiden Gifte"],"correctIndex":1,"explanation":"Katzen können giftige Pflanzen nicht immer erkennen – viele Vergiftungen durch Zimmerpflanzen kommen vor."},
+  {"id":"myt22","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer unfehlbar auf weiche Oberflächen fallen?","answers":["Ja, immer","Nein, die Landung hängt von Höhe und Drehgeschwindigkeit ab","Nur erwachsene Katzen landen sicher","Nur kleine Rassen"],"correctIndex":1,"explanation":"Der Drehmechanismus ist zuverlässig, aber aus zu geringer oder zu großer Höhe kann die Landung trotzdem Verletzungen verursachen."},
+  {"id":"myt23","category":"cat_myths","difficulty":"easy","question":"Sind Katzen nachtaktiv?","answers":["Ja, ausschließlich nachts aktiv","Nein, sie sind dämmerungsaktiv (morgens und abends)","Sie sind tagsüber aktiv","Sie sind immer gleich aktiv"],"correctIndex":1,"explanation":"Katzen sind hauptsächlich dämmerungsaktiv – aktiv in der Morgen- und Abenddämmerung, wenn Beutetiere unterwegs sind."},
+  {"id":"myt24","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen und Hunde immer Feinde sind?","answers":["Ja, sie sind Erzfeinde","Nein, viele Katzen und Hunde leben harmonisch zusammen","Nur bei bestimmten Hunderassen","Nur wenn sie jung zusammenkommen"],"correctIndex":1,"explanation":"Katzen und Hunde können gut miteinander auskommen, besonders wenn sie früh zusammengewöhnt wurden."},
+  {"id":"myt25","category":"cat_myths","difficulty":"easy","question":"Stimmt es, dass Katzen immer genau 9 Leben lang leben?","answers":["Ja, sie leben immer genau 9 Phasen","Nein, das ist nur ein Sprichwort für ihre Überlebensfähigkeit","Nur in bestimmten Kulturen","Nur bei wilden Katzen"],"correctIndex":1,"explanation":"Die neun Leben sind ein volkstümlicher Ausdruck für die erstaunliche Überlebensfähigkeit der Katze – keine biologische Tatsache."}
 ]

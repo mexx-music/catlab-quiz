@@ -1,47 +1,27 @@
 [
-  {
-    "id": "1",
-    "category": "cat_breeds",
-    "difficulty": "beginner",
-    "question": "Welche Katzenrasse ist bekannt für ihr blaues, dichtes Fell und ihre grünen Augen?",
-    "answers": ["Britisch Kurzhaar", "Russisch Blau", "Perserkatze", "Ragdoll"],
-    "correctIndex": 1,
-    "explanation": "Die Russisch Blau hat ein charakteristisches blaues Fell und leuchtend grüne Augen."
-  },
-  {
-    "id": "2",
-    "category": "cat_breeds",
-    "difficulty": "beginner",
-    "question": "Welche Katzenrasse ist für ihre schlaffen Muskeln bekannt und wird deshalb 'Ragdoll' genannt?",
-    "answers": ["Maine Coon", "Siamkatze", "Ragdoll", "Abessinierin"],
-    "correctIndex": 2,
-    "explanation": "Ragdolls werden so genannt, weil sie beim Hochheben entspannen wie eine Stoffpuppe."
-  },
-  {
-    "id": "3",
-    "category": "cat_breeds",
-    "difficulty": "beginner",
-    "question": "Welche Katzenrasse gilt als eine der größten Hauskatzen der Welt?",
-    "answers": ["Sphynx", "Maine Coon", "Singapura", "Türkisch Angora"],
-    "correctIndex": 1,
-    "explanation": "Maine Coons können bis zu 8 kg schwer und über 1 Meter lang werden."
-  },
-  {
-    "id": "4",
-    "category": "cat_breeds",
-    "difficulty": "beginner",
-    "question": "Welche Katzenrasse hat kein Fell und fühlt sich warm an?",
-    "answers": ["Devon Rex", "Sphynx", "Scottish Fold", "Bengalkatze"],
-    "correctIndex": 1,
-    "explanation": "Die Sphynx ist eine haarlose Katzenrasse. Ihre Körperwärme ist gut spürbar."
-  },
-  {
-    "id": "5",
-    "category": "cat_breeds",
-    "difficulty": "beginner",
-    "question": "Welche Katzenrasse ist bekannt für ihre nach vorne gefalteten Ohren?",
-    "answers": ["American Curl", "Scottish Fold", "Birma", "Norwegische Waldkatze"],
-    "correctIndex": 1,
-    "explanation": "Die Scottish Fold hat nach vorne und unten gefaltete Ohren durch eine genetische Mutation."
-  }
+  {"id":"br01","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse ist bekannt für ihr blaues, dichtes Fell und ihre grünen Augen?","answers":["Britisch Kurzhaar","Russisch Blau","Perserkatze","Ragdoll"],"correctIndex":1,"explanation":"Die Russisch Blau hat ein charakteristisches blaues Fell und leuchtend grüne Augen."},
+  {"id":"br02","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse wird 'Ragdoll' genannt, weil sie beim Hochheben schlaff wird?","answers":["Maine Coon","Siamkatze","Ragdoll","Abessinierin"],"correctIndex":2,"explanation":"Ragdolls entspannen beim Hochheben wie eine Stoffpuppe – daher der Name."},
+  {"id":"br03","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse gilt als eine der größten Hauskatzen der Welt?","answers":["Sphynx","Maine Coon","Singapura","Türkisch Angora"],"correctIndex":1,"explanation":"Maine Coons können bis zu 8 kg schwer und über 1 Meter lang werden."},
+  {"id":"br04","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse hat kein Fell?","answers":["Devon Rex","Sphynx","Scottish Fold","Bengalkatze"],"correctIndex":1,"explanation":"Die Sphynx ist eine haarlose Katzenrasse. Ihre Körperwärme ist gut spürbar."},
+  {"id":"br05","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse ist bekannt für ihre nach vorne gefalteten Ohren?","answers":["American Curl","Scottish Fold","Birma","Norwegische Waldkatze"],"correctIndex":1,"explanation":"Die Scottish Fold hat nach vorne gefaltete Ohren durch eine genetische Mutation."},
+  {"id":"br06","category":"cat_breeds","difficulty":"easy","question":"Aus welchem Land stammt die Siamkatze ursprünglich?","answers":["Japan","China","Thailand","Indien"],"correctIndex":2,"explanation":"Die Siamkatze stammt aus Thailand, das früher Siam hieß."},
+  {"id":"br07","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse hat langes seidiges Fell und ein flaches Gesicht?","answers":["Perserkatze","Birma","Abessinierkatze","Tonkinese"],"correctIndex":0,"explanation":"Die Perserkatze hat ein extrem langes, dichtes Fell und ein charakteristisch flaches Gesicht."},
+  {"id":"br08","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse hat nach hinten geschwungene Ohren?","answers":["Scottish Fold","American Curl","Devon Rex","Ocicat"],"correctIndex":1,"explanation":"Der American Curl hat Ohren, die sich nach hinten rollen – eine natürliche Mutation."},
+  {"id":"br09","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse gilt als besonders gesprächig und lautstark?","answers":["Ragdoll","Britisch Kurzhaar","Siamkatze","Russisch Blau"],"correctIndex":2,"explanation":"Siamkatzen sind für ihr lautes, durchdringendes Miauen bekannt."},
+  {"id":"br10","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse sieht aus wie ein kleiner Leopard?","answers":["Ocicat","Bengalkatze","Savannah","Egyptische Mau"],"correctIndex":1,"explanation":"Die Bengalkatze wurde aus Kreuzungen mit der Asiatischen Leopardkatze gezüchtet und hat ein wild aussehendes Fleckenmuster."},
+  {"id":"br11","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse stammt aus Norwegen und hat ein sehr dichtes Winterfell?","answers":["Sibirische Katze","Norwegische Waldkatze","Maine Coon","Türkisch Van"],"correctIndex":1,"explanation":"Die Norwegische Waldkatze hat ein doppellagiges, wasserfestes Fell."},
+  {"id":"br12","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse ist die kleinste anerkannte Hauskatzenrasse?","answers":["Munchkin","Singapura","Devon Rex","Cornish Rex"],"correctIndex":1,"explanation":"Die Singapura wiegt meist nur 2–3 kg und ist die kleinste anerkannte Rasse."},
+  {"id":"br13","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse ist bekannt für sehr kurze Beine?","answers":["Munchkin","Scottish Fold","Sphynx","Abessinierin"],"correctIndex":0,"explanation":"Die Munchkin-Katze hat durch eine natürliche Genmutation sehr kurze Beine."},
+  {"id":"br14","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse hat einen lockigen Pelz?","answers":["Devon Rex","Britisch Kurzhaar","Ragdoll","Siamkatze"],"correctIndex":0,"explanation":"Die Devon Rex hat weiches, welliges bis lockiges Fell."},
+  {"id":"br15","category":"cat_breeds","difficulty":"easy","question":"Aus welchem Land stammt die Abessinierkatze?","answers":["Australien","Äthiopien","Ägypten","Argentinien"],"correctIndex":1,"explanation":"Die Abessinierkatze stammt wahrscheinlich aus dem heutigen Äthiopien (früher Abessinien)."},
+  {"id":"br16","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse liebt Wasser und schwimmt gerne?","answers":["Perserkatze","Türkisch Van","Ragdoll","Sphynx"],"correctIndex":1,"explanation":"Die Türkisch Van liebt Wasser und ist für ihre Schwimmfreude bekannt."},
+  {"id":"br17","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse ist eine Kreuzung aus Serval und Hauskatze?","answers":["Bengal","Savannah","Ocicat","Chausie"],"correctIndex":1,"explanation":"Die Savannah-Katze entstand durch Kreuzung des afrikanischen Servalen mit der Hauskatze."},
+  {"id":"br18","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse gilt als besonders ruhig und kinderfreundlich?","answers":["Abessinierkatze","Ragdoll","Bengalkatze","Ocicat"],"correctIndex":1,"explanation":"Ragdolls sind für ihr sanftes Wesen bekannt und gelten als sehr familienfreundlich."},
+  {"id":"br19","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse aus Frankreich ist für ihre massige, blaue Färbung bekannt?","answers":["Russisch Blau","Kartäuser","Britisch Kurzhaar","Norwegische Waldkatze"],"correctIndex":1,"explanation":"Die Kartäuserkatze ist eine alte französische Rasse mit dichtem blauem Fell."},
+  {"id":"br20","category":"cat_breeds","difficulty":"easy","question":"Was ist das typische Merkmal der Britisch Kurzhaar?","answers":["Sehr lange Beine","Runder Kopf und dichtes kurzes Fell","Lockiges Fell","Sehr große Ohren"],"correctIndex":1,"explanation":"Britisch Kurzhaar-Katzen haben einen runden Kopf und ein dichtes, plüschiges kurzes Fell."},
+  {"id":"br21","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse hat langes Fell mit Colourpoint-Muster (dunkle Extremitäten)?","answers":["Birma","Himalaya","Angora","Ragdoll"],"correctIndex":1,"explanation":"Die Himalaya-Katze ist eine Kreuzung aus Perser und Siamkatze mit langem Fell und Colourpoint-Muster."},
+  {"id":"br22","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse hat ein charakteristisches 'M' auf der Stirn?","answers":["Perserkatze","Tabby-Muster","Siamkatze","Russisch Blau"],"correctIndex":1,"explanation":"Das 'M' auf der Stirn ist typisch für das Tabby-Fellmuster, das bei vielen Rassen vorkommt."},
+  {"id":"br23","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse ist bekannt für ihre sehr hohe Intelligenz und ihren Spieltrieb?","answers":["Perserkatze","Abessinierkatze","Ragdoll","Britisch Kurzhaar"],"correctIndex":1,"explanation":"Die Abessinierkatze gilt als eine der intelligentesten und aktivsten Katzenrassen."},
+  {"id":"br24","category":"cat_breeds","difficulty":"easy","question":"Welche Rasse ist die älteste bekannte Katzenrasse der Welt?","answers":["Perserkatze","Ägyptische Mau","Siamkatze","Türkisch Angora"],"correctIndex":1,"explanation":"Die Ägyptische Mau gilt als eine der ältesten Katzenrassen – sie ist auf alten ägyptischen Gemälden abgebildet."},
+  {"id":"br25","category":"cat_breeds","difficulty":"easy","question":"Welche Katzenrasse hat von Natur aus keinen Schwanz oder nur einen sehr kurzen Stummel?","answers":["Manx","Scottish Fold","Munchkin","Devon Rex"],"correctIndex":0,"explanation":"Die Manx-Katze stammt von der Isle of Man und ist bekannt für ihren fehlenden oder sehr kurzen Schwanz."}
 ]
