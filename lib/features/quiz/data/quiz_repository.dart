@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import '../models/quiz_definition.dart';
 import '../models/quiz_question.dart';
 
 const _allAssetPaths = [
@@ -11,6 +12,14 @@ const _allAssetPaths = [
 ];
 
 class QuizRepository {
+  Future<List<QuizDefinition>> loadCatalog() async {
+    final jsonString = await rootBundle.loadString('assets/quiz/quiz_catalog.json');
+    final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
+    return jsonList
+        .map((e) => QuizDefinition.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<QuizQuestion>> loadQuestions(String assetPath) async {
     final jsonString = await rootBundle.loadString(assetPath);
     final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;

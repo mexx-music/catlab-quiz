@@ -1,49 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
+import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
-
-class _QuizCategory {
-  final String title;
-  final String emoji;
-  final String assetPath;
-  final String categoryKey;
-
-  const _QuizCategory({
-    required this.title,
-    required this.emoji,
-    required this.assetPath,
-    required this.categoryKey,
-  });
-}
-
-const _categories = [
-  _QuizCategory(
-    title: 'Katzenrassen',
-    emoji: '🐈',
-    assetPath: 'assets/quiz/cat_breeds_beginner.json',
-    categoryKey: 'cat_breeds',
-  ),
-  _QuizCategory(
-    title: 'Katzenverhalten',
-    emoji: '🐾',
-    assetPath: 'assets/quiz/cat_behavior.json',
-    categoryKey: 'cat_behavior',
-  ),
-  _QuizCategory(
-    title: 'Schnurren',
-    emoji: '😸',
-    assetPath: 'assets/quiz/cat_purring.json',
-    categoryKey: 'cat_purring',
-  ),
-  _QuizCategory(
-    title: 'Katzenmythen',
-    emoji: '🔮',
-    assetPath: 'assets/quiz/cat_myths.json',
-    categoryKey: 'cat_myths',
-  ),
-];
 
 class QuizHomeScreen extends StatefulWidget {
   const QuizHomeScreen({super.key});
@@ -53,42 +13,48 @@ class QuizHomeScreen extends StatefulWidget {
 }
 
 class _QuizHomeScreenState extends State<QuizHomeScreen> {
+  final _repo = QuizRepository();
   final _highscoreRepo = HighscoreRepository();
+  List<QuizDefinition> _catalog = [];
   final Map<String, int?> _highscores = {};
 
   @override
   void initState() {
     super.initState();
-    _loadHighscores();
+    _loadData();
   }
 
-  Future<void> _loadHighscores() async {
+  Future<void> _loadData() async {
+    final catalog = await _repo.loadCatalog();
     final results = <String, int?>{};
-    for (final cat in _categories) {
-      results[cat.categoryKey] = await _highscoreRepo.getHighscore(cat.categoryKey);
-    }
     results['daily'] = await _highscoreRepo.getHighscore('daily');
+    for (final quiz in catalog) {
+      results[quiz.id] = await _highscoreRepo.getHighscore(quiz.id);
+    }
     if (mounted) {
-      setState(() => _highscores.addAll(results));
+      setState(() {
+        _catalog = catalog;
+        _highscores.addAll(results);
+      });
     }
   }
 
-  Future<void> _startQuiz(BuildContext context, _QuizCategory category) async {
-    final questions = await QuizRepository().loadQuestions(category.assetPath);
+  Future<void> _startQuiz(BuildContext context, QuizDefinition quiz) async {
+    final questions = await _repo.loadQuestions(quiz.assetPath);
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => QuizPlayScreen(
           questions: questions,
-          categoryKey: category.categoryKey,
+          categoryKey: quiz.id,
         ),
       ),
     );
-    if (mounted) _loadHighscores();
+    if (mounted) _loadData();
   }
 
   Future<void> _startDailyQuiz(BuildContext context) async {
-    final questions = await QuizRepository().loadDailyQuestions();
+    final questions = await _repo.loadDailyQuestions();
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -98,7 +64,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         ),
       ),
     );
-    if (mounted) _loadHighscores();
+    if (mounted) _loadData();
   }
 
   @override
@@ -119,7 +85,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Wähle eine Kategorie:',
+                'Wähle einen Quizbogen:',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -133,23 +99,29 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Kategorien',
+                      'Quizbögen',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ...List.generate(_categories.length, (index) {
-                      final cat = _categories[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _CategoryCard(
-                          category: cat,
-                          highscore: _highscores[cat.categoryKey],
-                          onTap: () => _startQuiz(context, cat),
-                        ),
-                      );
-                    }),
+                    if (_catalog.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else
+                      ...List.generate(_catalog.length, (index) {
+                        final quiz = _catalog[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _QuizCard(
+                            quiz: quiz,
+                            highscore: _highscores[quiz.id],
+                            onTap: () => _startQuiz(context, quiz),
+                          ),
+                        );
+                      }),
                   ],
                 ),
               ),
@@ -220,13 +192,13 @@ class _DailyQuizCard extends StatelessWidget {
   }
 }
 
-class _CategoryCard extends StatelessWidget {
-  final _QuizCategory category;
+class _QuizCard extends StatelessWidget {
+  final QuizDefinition quiz;
   final int? highscore;
   final VoidCallback onTap;
 
-  const _CategoryCard({
-    required this.category,
+  const _QuizCard({
+    required this.quiz,
     required this.highscore,
     required this.onTap,
   });
@@ -244,14 +216,14 @@ class _CategoryCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           child: Row(
             children: [
-              Text(category.emoji, style: const TextStyle(fontSize: 32)),
+              Text(quiz.emoji, style: const TextStyle(fontSize: 32)),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      category.title,
+                      quiz.title,
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -260,16 +232,22 @@ class _CategoryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      highscore != null
-                          ? 'Bestpunktzahl: $highscore / 5'
-                          : 'Noch kein Highscore',
+                      quiz.description,
                       style: TextStyle(
                         fontSize: 12,
-                        color: highscore != null
-                            ? AppTheme.primary
-                            : Colors.grey.shade500,
+                        color: Colors.grey.shade600,
                       ),
                     ),
+                    if (highscore != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Bestpunktzahl: $highscore / 5',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.primary,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
