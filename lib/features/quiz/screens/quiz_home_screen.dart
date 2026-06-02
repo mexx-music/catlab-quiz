@@ -4,6 +4,7 @@ import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/content/screens/content_library_screen.dart';
 import 'package:catlab_quiz/features/content/screens/export_screen.dart';
+import 'package:catlab_quiz/features/content/screens/post_creator_screen.dart';
 import 'package:catlab_quiz/features/content/screens/today_screen.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
@@ -127,6 +128,16 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => const ExportScreen(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  _ToolButton(
+                    icon: '🖼',
+                    label: 'Creator',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const PostCreatorScreen(),
                       ),
                     ),
                   ),
