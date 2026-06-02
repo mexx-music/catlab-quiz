@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
+import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
@@ -18,6 +19,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
   final _highscoreRepo = HighscoreRepository();
   List<QuizDefinition> _catalog = [];
   final Map<String, int?> _highscores = {};
+  QuizQuestion? _dailyQuestion;
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
 
   Future<void> _loadData() async {
     final catalog = await _repo.loadCatalog();
+    final dailyQ = await _repo.loadDailyQuestion();
     final results = <String, int?>{};
     results['daily'] = await _highscoreRepo.getHighscore('daily');
     for (final quiz in catalog) {
@@ -35,6 +38,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     if (mounted) {
       setState(() {
         _catalog = catalog;
+        _dailyQuestion = dailyQ;
         _highscores.addAll(results);
       });
     }
@@ -98,6 +102,30 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                       highscore: _highscores['daily'],
                       onTap: () => _startDailyQuiz(context),
                     ),
+                    if (_dailyQuestion != null) ...[
+                      const SizedBox(height: 12),
+                      _DailyQuestionCard(
+                        question: _dailyQuestion!,
+                        onCopy: () async {
+                          final q = _dailyQuestion!;
+                          final labels = ['A', 'B', 'C', 'D'];
+                          final answers = List.generate(
+                            q.answers.length,
+                            (i) => '${labels[i]}) ${q.answers[i]}',
+                          ).join('\n');
+                          final text =
+                              '🐱 Frage des Tages:\n${q.question}\n\n$answers\n\nWas denkst du? Antwort später bei CatLab Quiz.';
+                          await Clipboard.setData(ClipboardData(text: text));
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Frage des Tages kopiert'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     Text(
                       'Quizbögen',
@@ -401,6 +429,68 @@ class _QuizCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyQuestionCard extends StatelessWidget {
+  final QuizQuestion question;
+  final VoidCallback onCopy;
+
+  const _DailyQuestionCard({required this.question, required this.onCopy});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('📅', style: TextStyle(fontSize: 24)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Frage des Tages',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    question.question,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  ),
+                  const SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: onCopy,
+                    child: const Text(
+                      'Post kopieren',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.primary,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppTheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -30,6 +30,11 @@ class QuizRepository {
     return questions;
   }
 
+  Future<QuizQuestion> loadDailyQuestion() async {
+    final list = await loadDailyQuestions(count: 1);
+    return list.first;
+  }
+
   Future<List<QuizQuestion>> loadDailyQuestions({int count = 5}) async {
     final now = DateTime.now();
     final seed = int.parse(
