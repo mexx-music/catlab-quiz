@@ -67,6 +67,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     for (final cat in _categories) {
       results[cat.categoryKey] = await _highscoreRepo.getHighscore(cat.categoryKey);
     }
+    results['daily'] = await _highscoreRepo.getHighscore('daily');
     if (mounted) {
       setState(() => _highscores.addAll(results));
     }
@@ -80,6 +81,20 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         builder: (_) => QuizPlayScreen(
           questions: questions,
           categoryKey: category.categoryKey,
+        ),
+      ),
+    );
+    if (mounted) _loadHighscores();
+  }
+
+  Future<void> _startDailyQuiz(BuildContext context) async {
+    final questions = await QuizRepository().loadDailyQuestions();
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => QuizPlayScreen(
+          questions: questions,
+          categoryKey: 'daily',
         ),
       ),
     );
@@ -110,18 +125,92 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
               ),
               const SizedBox(height: 32),
               Expanded(
-                child: ListView.separated(
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final cat = _categories[index];
-                    return _CategoryCard(
-                      category: cat,
-                      highscore: _highscores[cat.categoryKey],
-                      onTap: () => _startQuiz(context, cat),
-                    );
-                  },
+                child: ListView(
+                  children: [
+                    _DailyQuizCard(
+                      highscore: _highscores['daily'],
+                      onTap: () => _startDailyQuiz(context),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Kategorien',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ...List.generate(_categories.length, (index) {
+                      final cat = _categories[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _CategoryCard(
+                          category: cat,
+                          highscore: _highscores[cat.categoryKey],
+                          onTap: () => _startQuiz(context, cat),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyQuizCard extends StatelessWidget {
+  final int? highscore;
+  final VoidCallback onTap;
+
+  const _DailyQuizCard({required this.highscore, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppTheme.primary,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 3,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              const Text('⭐', style: TextStyle(fontSize: 32)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Quiz des Tages',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      highscore != null
+                          ? 'Bestpunktzahl: $highscore / 5'
+                          : '5 zufällige Fragen aus allen Kategorien',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withAlpha(210),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.white,
               ),
             ],
           ),
