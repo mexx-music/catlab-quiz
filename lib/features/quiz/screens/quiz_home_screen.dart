@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
+import 'package:catlab_quiz/features/content/screens/content_library_screen.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
@@ -88,13 +89,37 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                   context,
                 ).textTheme.headlineMedium?.copyWith(fontSize: 32),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Wähle einen Quizbogen:',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Wähle einen Quizbogen:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    icon: const Text('📰', style: TextStyle(fontSize: 13)),
+                    label: const Text(
+                      'Content',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primary,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const ContentLibraryScreen(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
               Expanded(
                 child: ListView(
                   children: [

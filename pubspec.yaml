@@ -73,11 +73,8 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/quiz/quiz_catalog.json
-    - assets/quiz/cat_breeds_beginner.json
-    - assets/quiz/cat_behavior.json
-    - assets/quiz/cat_purring.json
-    - assets/quiz/cat_myths.json
+    - assets/quiz/
+    - assets/content/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
