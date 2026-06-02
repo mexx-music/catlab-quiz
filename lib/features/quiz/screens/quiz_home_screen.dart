@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:catlab_quiz/app/app_config.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/content/screens/content_library_screen.dart';
@@ -99,51 +100,53 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _ToolButton(
-                    icon: '📅',
-                    label: 'Heute',
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const TodayScreen(),
+              if (AppConfig.adminMode) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ToolButton(
+                      icon: '📅',
+                      label: 'Heute',
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const TodayScreen(),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  _ToolButton(
-                    icon: '📰',
-                    label: 'Content',
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const ContentLibraryScreen(),
+                    const SizedBox(width: 4),
+                    _ToolButton(
+                      icon: '📰',
+                      label: 'Content',
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ContentLibraryScreen(),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  _ToolButton(
-                    icon: '📤',
-                    label: 'Export',
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const ExportScreen(),
+                    const SizedBox(width: 4),
+                    _ToolButton(
+                      icon: '📤',
+                      label: 'Export',
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ExportScreen(),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  _ToolButton(
-                    icon: '🖼',
-                    label: 'Creator',
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const PostCreatorScreen(),
+                    const SizedBox(width: 4),
+                    _ToolButton(
+                      icon: '🖼',
+                      label: 'Creator',
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const PostCreatorScreen(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
+                  ],
+                ),
+                const SizedBox(height: 14),
+              ],
               Expanded(
                 child: ListView(
                   children: [
@@ -524,20 +527,22 @@ class _QuizCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 4),
-                        GestureDetector(
-                          onTap: onShowPost,
-                          child: const Text(
-                            'Post-Text anzeigen',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.primary,
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppTheme.primary,
+                        if (AppConfig.adminMode) ...[
+                          const SizedBox(height: 4),
+                          GestureDetector(
+                            onTap: onShowPost,
+                            child: const Text(
+                              'Post-Text anzeigen',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppTheme.primary,
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
