@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:catlab_quiz/features/content/data/content_repository.dart';
-import 'package:catlab_quiz/features/content/data/content_status_repository.dart';
-import 'package:catlab_quiz/features/content/models/content_post.dart';
+import 'package:catlab_quiz/features/content/data/post_queue_service.dart';
 import 'package:catlab_quiz/features/content/models/content_post_status.dart';
-import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
-import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -16,14 +12,7 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
-  final _quizRepo = QuizRepository();
-  final _contentRepo = ContentRepository();
-  final _statusRepo = ContentStatusRepository();
-
-  List<ContentPost> _posts = [];
-  Map<String, String> _titleMap = {};
-  Map<String, String> _emojiMap = {};
-  Map<String, ContentPostStatus> _statusMap = {};
+  final _queue = PostQueueService();
   bool _loading = true;
 
   @override
@@ -33,69 +22,13 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   Future<void> _load() async {
-    final catalog = await _quizRepo.loadCatalog();
-    final posts = await _contentRepo.loadAll(catalog);
-    final statusMap = await _statusRepo.loadAll(posts);
-
-    final tMap = <String, String>{};
-    final eMap = <String, String>{};
-    for (final quiz in catalog) {
-      final qid = _fileId(quiz);
-      tMap[qid] = quiz.title;
-      eMap[qid] = quiz.emoji;
-    }
-
-    if (mounted) {
-      setState(() {
-        _posts = posts;
-        _titleMap = tMap;
-        _emojiMap = eMap;
-        _statusMap = statusMap;
-        _loading = false;
-      });
-    }
+    await _queue.load();
+    if (mounted) setState(() => _loading = false);
   }
 
-  static String _fileId(QuizDefinition quiz) =>
-      quiz.assetPath.split('/').last.replaceAll('.json', '');
-
-  static String _key(ContentPost p) => '${p.quizId}_${p.questionId}';
-
-  ContentPostStatus _statusOf(ContentPost p) =>
-      _statusMap[_key(p)] ?? ContentPostStatus.notPosted;
-
-  // First post where the question has not yet been posted
-  ContentPost? get _nextQuestion {
-    for (final p in _posts) {
-      if (_statusOf(p) == ContentPostStatus.notPosted) return p;
-    }
-    return null;
-  }
-
-  // First post where the question was posted but the answer hasn't been yet
-  ContentPost? get _nextAnswer {
-    for (final p in _posts) {
-      if (_statusOf(p) == ContentPostStatus.questionPosted) return p;
-    }
-    return null;
-  }
-
-  Map<ContentPostStatus, int> get _stats {
-    final counts = {for (final s in ContentPostStatus.values) s: 0};
-    for (final p in _posts) {
-      final s = _statusOf(p);
-      counts[s] = (counts[s] ?? 0) + 1;
-    }
-    return counts;
-  }
-
-  bool get _allDone =>
-      _posts.isNotEmpty &&
-      _posts.every((p) => _statusOf(p) == ContentPostStatus.completed);
-
-  Future<void> _mark(ContentPost post, ContentPostStatus newStatus) async {
-    await _statusRepo.setStatus(post.quizId, post.questionId, newStatus);
-    if (mounted) setState(() => _statusMap[_key(post)] = newStatus);
+  Future<void> _act(Future<void> Function() action) async {
+    await action();
+    if (mounted) setState(() {});
   }
 
   Future<void> _copy(BuildContext context, String text, String msg) async {
@@ -126,7 +59,7 @@ class _TodayScreenState extends State<TodayScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StatsCard(stats: _stats),
+                  _StatsCard(stats: _queue.statistics),
                   const SizedBox(height: 20),
                   Text(
                     'Heute geplant:',
@@ -136,7 +69,7 @@ class _TodayScreenState extends State<TodayScreen> {
                         ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 14),
-                  if (_allDone)
+                  if (_queue.allDone)
                     _AllDoneCard()
                   else ...[
                     _buildQuestionBlock(context),
@@ -152,44 +85,40 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   Widget _buildQuestionBlock(BuildContext context) {
-    final post = _nextQuestion;
+    final post = _queue.nextQuestion;
     if (post == null) {
-      return _EmptySlot(
+      return const _EmptySlot(
         icon: '🐱',
         message: 'Keine offenen Fragen – alle wurden bereits gepostet.',
       );
     }
-    final title = _titleMap[post.quizId] ?? post.quizId;
-    final emoji = _emojiMap[post.quizId] ?? '🐱';
     return _TodayCard(
       sectionLabel: '🐱 Frage des Tages',
-      quizLabel: '$emoji $title',
+      quizLabel: '${_queue.emojiOf(post)} ${_queue.titleOf(post)}',
       postText: post.questionPost,
       onCopy: () => _copy(context, post.questionPost, 'Frage-Post kopiert'),
       actionLabel: 'Frage gepostet',
       actionColor: Colors.orange,
-      onAction: () => _mark(post, ContentPostStatus.questionPosted),
+      onAction: () => _act(() => _queue.markQuestionPosted(post)),
     );
   }
 
   Widget _buildAnswerBlock(BuildContext context) {
-    final post = _nextAnswer;
+    final post = _queue.nextAnswer;
     if (post == null) {
-      return _EmptySlot(
+      return const _EmptySlot(
         icon: '✅',
         message: 'Keine Fragen warten auf ihre Auflösung.',
       );
     }
-    final title = _titleMap[post.quizId] ?? post.quizId;
-    final emoji = _emojiMap[post.quizId] ?? '🐱';
     return _TodayCard(
       sectionLabel: '✅ Auflösung',
-      quizLabel: '$emoji $title',
+      quizLabel: '${_queue.emojiOf(post)} ${_queue.titleOf(post)}',
       postText: post.answerPost,
       onCopy: () => _copy(context, post.answerPost, 'Auflösung kopiert'),
       actionLabel: 'Auflösung gepostet',
       actionColor: Colors.blue,
-      onAction: () => _mark(post, ContentPostStatus.completed),
+      onAction: () => _act(() => _queue.markAnswerPosted(post)),
     );
   }
 }
