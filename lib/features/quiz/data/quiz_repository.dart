@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:catlab_quiz/app/locale_controller.dart';
 import '../models/quiz_definition.dart';
 import '../models/quiz_question.dart';
 
@@ -21,7 +22,7 @@ class QuizRepository {
   }
 
   Future<List<QuizQuestion>> loadQuestions(String assetPath) async {
-    final jsonString = await rootBundle.loadString(assetPath);
+    final jsonString = await _loadLocalized(assetPath);
     final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
     final questions = jsonList
         .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))
@@ -29,6 +30,22 @@ class QuizRepository {
     final rng = Random();
     questions.shuffle(rng);
     return questions.map((q) => q.withShuffledAnswers(rng)).toList();
+  }
+
+  /// Tries to load a locale-specific version of [assetPath].
+  /// Falls back to the original German/root path if no translation exists.
+  Future<String> _loadLocalized(String assetPath) async {
+    final locale = localeController.value?.languageCode;
+    if (locale != null && locale != 'de') {
+      final filename = assetPath.split('/').last;
+      final localePath = 'assets/quiz/$locale/$filename';
+      try {
+        return await rootBundle.loadString(localePath);
+      } catch (_) {
+        // Translation not found – fall through to German baseline.
+      }
+    }
+    return rootBundle.loadString(assetPath);
   }
 
   Future<QuizQuestion> loadDailyQuestion() async {
