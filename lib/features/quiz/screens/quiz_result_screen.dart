@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_home_screen.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class _Level {
@@ -11,18 +12,18 @@ class _Level {
   const _Level(this.emoji, this.title, this.description);
 }
 
-_Level _levelFor(int score, int total) {
+_Level _levelFor(int score, int total, AppLocalizations l10n) {
   final pct = total > 0 ? score / total : 0.0;
   if (pct >= 0.9) {
-    return const _Level('🏆', 'Katzenexperte', 'Du kennst dich erstaunlich gut mit Katzen aus.');
+    return _Level('🏆', l10n.levelExpert, l10n.levelExpertDesc);
   }
   if (pct >= 0.7) {
-    return const _Level('😺', 'Katzenkenner', 'Du weißt schon einiges über Katzen – beeindruckend!');
+    return _Level('😺', l10n.levelKnower, l10n.levelKnowerDesc);
   }
   if (pct >= 0.4) {
-    return const _Level('🐱', 'Katzenfreund', 'Du liebst Katzen und lernst immer mehr dazu.');
+    return _Level('🐱', l10n.levelFriend, l10n.levelFriendDesc);
   }
-  return const _Level('🐾', 'Katzen-Anfänger', 'Noch Luft nach oben – aber du bist auf dem richtigen Weg!');
+  return _Level('🐾', l10n.levelBeginner, l10n.levelBeginnerDesc);
 }
 
 class QuizResultScreen extends StatefulWidget {
@@ -77,14 +78,15 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ergebnis kopiert')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.resultCopied)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final level = _levelFor(widget.score, widget.total);
+    final l10n = AppLocalizations.of(context)!;
+    final level = _levelFor(widget.score, widget.total, l10n);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -95,12 +97,12 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               Text(level.emoji, style: const TextStyle(fontSize: 80)),
               const SizedBox(height: 16),
               Text(
-                'Ergebnis',
+                l10n.result,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 12),
               Text(
-                '${widget.score} / ${widget.total} Punkte',
+                l10n.points(widget.score, widget.total),
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -119,7 +121,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 icon: const Icon(Icons.copy),
-                label: const Text('Ergebnis kopieren'),
+                label: Text(l10n.copyResult),
                 onPressed: () => _copyResult(context, level),
               ),
               const SizedBox(height: 12),
@@ -132,7 +134,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                     (_) => false,
                   );
                 },
-                child: const Text('Nochmal spielen'),
+                child: Text(l10n.playAgain),
               ),
             ],
           ),
@@ -207,9 +209,9 @@ class _HighscoreInfo extends StatelessWidget {
       child: Column(
         children: [
           if (isNewHighscore) ...[
-            const Text(
-              '🎉 Neuer Highscore!',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.newHighscore,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primary,
@@ -218,7 +220,10 @@ class _HighscoreInfo extends StatelessWidget {
             const SizedBox(height: 4),
           ],
           Text(
-            'Bestpunktzahl: ${isNewHighscore ? currentScore : (previousHighscore ?? currentScore)} / $total',
+            AppLocalizations.of(context)!.bestScore(
+              isNewHighscore ? currentScore : (previousHighscore ?? currentScore),
+              total,
+            ),
             style: const TextStyle(fontSize: 14, color: AppTheme.textDark),
           ),
         ],

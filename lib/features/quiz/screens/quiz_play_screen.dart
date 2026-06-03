@@ -3,6 +3,7 @@ import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_result_screen.dart';
 import 'package:catlab_quiz/features/quiz/widgets/answer_button.dart';
 import 'package:catlab_quiz/features/quiz/widgets/quiz_progress_bar.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class QuizPlayScreen extends StatefulWidget {
@@ -139,8 +140,8 @@ class _QuizPlayScreenState extends State<QuizPlayScreen> {
                   onPressed: _next,
                   child: Text(
                     _currentIndex == widget.questions.length - 1
-                        ? 'Ergebnis anzeigen'
-                        : 'Weiter',
+                        ? AppLocalizations.of(context)!.showResult
+                        : AppLocalizations.of(context)!.next,
                   ),
                 ),
               ],

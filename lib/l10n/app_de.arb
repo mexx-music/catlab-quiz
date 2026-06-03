@@ -1,0 +1,125 @@
+{
+  "@@locale": "de",
+
+  "appTitle": "CatLab 🐱 Quiz",
+  "@appTitle": { "description": "App title displayed in the header" },
+
+  "chooseQuizbook": "Wähle einen Quizbogen:",
+  "quizOfTheDay": "Quiz des Tages",
+  "dailyQuizSubtitle": "5 zufällige Fragen aus allen Kategorien",
+
+  "bestScore": "Bestpunktzahl: {score} / {total}",
+  "@bestScore": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "questionOfTheDay": "Frage des Tages",
+  "quizbooks": "Quizbögen",
+
+  "postCopy": "Post kopieren",
+  "resolutionCopy": "Auflösung kopieren",
+  "questionOfDayCopied": "Frage des Tages kopiert",
+  "resolutionCopied": "Auflösung kopiert",
+
+  "showPostText": "Post-Text anzeigen",
+  "postTextCopied": "Post-Text kopiert",
+  "adminAccess": "Admin-Zugang",
+  "codeLabel": "Code",
+  "unlock": "Freischalten",
+  "cancel": "Abbrechen",
+  "wrongCode": "Falscher Code",
+  "lockAdmin": "🔒 Admin sperren",
+
+  "next": "Weiter",
+  "showResult": "Ergebnis anzeigen",
+
+  "result": "Ergebnis",
+  "points": "{score} / {total} Punkte",
+  "@points": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "levelExpert": "Katzenexperte",
+  "levelExpertDesc": "Du kennst dich erstaunlich gut mit Katzen aus.",
+  "levelKnower": "Katzenkenner",
+  "levelKnowerDesc": "Du weißt schon einiges über Katzen – beeindruckend!",
+  "levelFriend": "Katzenfreund",
+  "levelFriendDesc": "Du liebst Katzen und lernst immer mehr dazu.",
+  "levelBeginner": "Katzen-Anfänger",
+  "levelBeginnerDesc": "Noch Luft nach oben – aber du bist auf dem richtigen Weg!",
+  "newHighscore": "🎉 Neuer Highscore!",
+  "copyResult": "Ergebnis kopieren",
+  "playAgain": "Nochmal spielen",
+  "resultCopied": "Ergebnis kopiert",
+
+  "catQuestionBadge": "🐱 Katzenfrage",
+  "whatDoYouThink": "Was denkst du? 👇",
+  "testYourKnowledge": "Teste dein Katzenwissen:",
+
+  "copy": "Kopieren",
+  "close": "Schließen",
+  "done": "Fertig",
+  "download": "Herunterladen",
+
+  "postCreatorTitle": "Post Creator",
+  "copyText": "Text kopieren",
+  "shareBtn": "Teilen",
+  "sharingInProgress": "Wird geteilt…",
+  "createPng": "PNG erstellen",
+  "creatingPng": "Wird erstellt…",
+  "pngCreationFailed": "PNG-Erzeugung fehlgeschlagen",
+  "pngCreatedTitle": "PNG wurde erzeugt",
+  "imageSharedTitle": "Bild geteilt",
+  "quizTextCopiedHint": "Der Quiztext wurde kopiert – bitte im Facebook-Textfeld einfügen.",
+  "recopyText": "Text erneut kopieren",
+  "quizTextRecopied": "Quiztext erneut kopiert",
+  "imageSharedTextCopied": "Bild geteilt – Text wurde kopiert",
+  "quizbookLabel": "Quizbogen",
+  "questionSelectorLabel": "Frage",
+  "formatLabel": "Format",
+  "chooseQuizHint": "Quiz wählen...",
+  "firstChooseQuizbook": "Erst Quizbogen wählen",
+  "chooseQuestionHint": "Frage wählen...",
+  "questionPostLabel": "🐱 Frage-Post",
+  "resolutionComingSoon": "✅ Auflösung (bald)",
+  "pasteHint": "Text kopieren und in Facebook, Instagram, Threads oder Pinterest einfügen.",
+  "prepareSharingTitle": "Teilen vorbereiten",
+  "sizeLabel": "Größe",
+  "fileLabel": "Datei",
+
+  "exportTitle": "Export",
+  "postsTotalLabel": "Posts gesamt",
+  "openPostsLabel": "Offen",
+  "donePostsLabel": "Erledigt",
+  "copyJson": "JSON kopieren",
+  "copyCsv": "CSV kopieren",
+  "jsonCopied": "JSON kopiert",
+  "csvCopied": "CSV kopiert",
+  "schedulerHint": "Kompatibel mit Publer · Buffer · Metricool und anderen\nScheduling-Tools.",
+
+  "todayPostTitle": "Heute posten",
+  "plannedToday": "Heute geplant:",
+  "questionPosted": "Frage gepostet",
+  "resolutionPosted": "Auflösung gepostet",
+  "questionPostCopied": "Frage-Post kopiert",
+  "noOpenQuestions": "Keine offenen Fragen – alle wurden bereits gepostet.",
+  "noResolutionsWaiting": "Keine Fragen warten auf ihre Auflösung.",
+  "allPostsUsed": "Alle aktuellen Posts wurden verwendet.",
+
+  "contentLibraryTitle": "Content Library",
+  "allFilter": "Alle",
+  "allQuizbooks": "Alle Quizbögen",
+  "noPostsInSelection": "Keine Posts in dieser Auswahl.",
+  "questionPostSection": "Frage-Post",
+  "resolutionPostSection": "Auflösungs-Post",
+  "copyResolution": "Auflösung kopieren",
+  "markQuestion": "Frage markieren",
+  "markResolution": "Auflösung markieren",
+  "resetStatus": "Zurücksetzen"
+}

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/app/admin_access_service.dart';
 import 'package:catlab_quiz/app/app_config.dart';
+import 'package:catlab_quiz/app/locale_controller.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/content/screens/content_library_screen.dart';
@@ -66,14 +68,15 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
   }
 
   void _showAdminDialog() {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Admin-Zugang'),
+        title: Text(l10n.adminAccess),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Code'),
+          decoration: InputDecoration(labelText: l10n.codeLabel),
           keyboardType: TextInputType.number,
           autofocus: true,
           onSubmitted: (_) => _tryUnlock(ctx, controller.text),
@@ -81,11 +84,11 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => _tryUnlock(ctx, controller.text),
-            child: const Text('Freischalten'),
+            child: Text(l10n.unlock),
           ),
         ],
       ),
@@ -100,7 +103,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Falscher Code')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.wrongCode)),
         );
       }
     }
@@ -144,6 +147,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
   }
 
   Future<void> _startDailyQuiz(BuildContext context) async {
+    final title = AppLocalizations.of(context)!.quizOfTheDay;
     final questions = await _repo.loadDailyQuestions();
     if (!context.mounted) return;
     await Navigator.of(context).push(
@@ -151,7 +155,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
         builder: (_) => QuizPlayScreen(
           questions: questions,
           categoryKey: 'daily',
-          quizTitle: 'Quiz des Tages',
+          quizTitle: title,
         ),
       ),
     );
@@ -160,17 +164,22 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: const _LangSwitcher(),
+              ),
               GestureDetector(
                 onTap: _onCatTap,
                 behavior: HitTestBehavior.opaque,
                 child: Text(
-                  'CatLab 🐱 Quiz',
+                  l10n.appTitle,
                   style: Theme.of(
                     context,
                   ).textTheme.headlineMedium?.copyWith(fontSize: 32),
@@ -178,7 +187,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Wähle einen Quizbogen:',
+                l10n.chooseQuizbook,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -241,7 +250,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       textStyle: const TextStyle(fontSize: 11),
                     ),
-                    child: const Text('🔒 Admin sperren'),
+                    child: Text(l10n.lockAdmin),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -269,8 +278,8 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                           await Clipboard.setData(ClipboardData(text: text));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Frage des Tages kopiert'),
+                              SnackBar(
+                                content: Text(AppLocalizations.of(context)!.questionOfDayCopied),
                               ),
                             );
                           }
@@ -284,8 +293,8 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                           await Clipboard.setData(ClipboardData(text: text));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Auflösung kopiert'),
+                              SnackBar(
+                                content: Text(AppLocalizations.of(context)!.resolutionCopied),
                               ),
                             );
                           }
@@ -294,7 +303,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                     ],
                     const SizedBox(height: 16),
                     Text(
-                      'Quizbögen',
+                      l10n.quizbooks,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -387,9 +396,9 @@ class _DailyQuizCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Quiz des Tages',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.quizOfTheDay,
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -398,8 +407,8 @@ class _DailyQuizCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       highscore != null
-                          ? 'Bestpunktzahl: $highscore / 5'
-                          : '5 zufällige Fragen aus allen Kategorien',
+                          ? AppLocalizations.of(context)!.bestScore(highscore!, 5)
+                          : AppLocalizations.of(context)!.dailyQuizSubtitle,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withAlpha(210),
@@ -465,13 +474,13 @@ void _showPostSheet(BuildContext context, QuizDefinition quiz) {
             width: double.infinity,
             child: ElevatedButton.icon(
               icon: const Icon(Icons.copy),
-              label: const Text('Kopieren'),
+              label: Text(AppLocalizations.of(context)!.copy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: postText));
                 if (context.mounted) {
                   Navigator.of(sheetCtx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Post-Text kopiert')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.postTextCopied)),
                   );
                 }
               },
@@ -622,7 +631,7 @@ class _QuizCard extends StatelessWidget {
                         if (highscore != null) ...[
                           const SizedBox(height: 2),
                           Text(
-                            'Bestpunktzahl: $highscore / 5',
+                            AppLocalizations.of(context)!.bestScore(highscore!, 5),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppTheme.primary,
@@ -633,9 +642,9 @@ class _QuizCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           GestureDetector(
                             onTap: onShowPost,
-                            child: const Text(
-                              'Post-Text anzeigen',
-                              style: TextStyle(
+                            child: Text(
+                              AppLocalizations.of(context)!.showPostText,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: AppTheme.primary,
                                 fontWeight: FontWeight.w500,
@@ -709,9 +718,9 @@ class _DailyQuestionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Frage des Tages',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.questionOfTheDay,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.textDark,
@@ -729,9 +738,9 @@ class _DailyQuestionCard extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: onCopy,
-                        child: const Text(
-                          'Post kopieren',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.postCopy,
+                          style: const TextStyle(
                             fontSize: 12,
                             color: AppTheme.primary,
                             fontWeight: FontWeight.w500,
@@ -744,7 +753,7 @@ class _DailyQuestionCard extends StatelessWidget {
                       GestureDetector(
                         onTap: onCopyResolution,
                         child: Text(
-                          'Auflösung kopieren',
+                          AppLocalizations.of(context)!.resolutionCopy,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -789,6 +798,38 @@ class _ToolButton extends StatelessWidget {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       onPressed: onPressed,
+    );
+  }
+}
+
+// ── Language switcher ─────────────────────────────────────────────────────────
+
+class _LangSwitcher extends StatelessWidget {
+  const _LangSwitcher();
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: localeController,
+      builder: (_, locale, __) {
+        final isEn = locale?.languageCode == 'en';
+        return TextButton(
+          onPressed: () {
+            localeController.value =
+                isEn ? const Locale('de') : const Locale('en');
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: AppTheme.primary,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textStyle: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+          child: Text(isEn ? '🇩🇪 DE' : '🇬🇧 EN'),
+        );
+      },
     );
   }
 }

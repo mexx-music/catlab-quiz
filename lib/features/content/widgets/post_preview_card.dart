@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 // ── Format / Platform enums (v1: only questionPost implemented) ───────────────
@@ -121,9 +122,9 @@ class _Body extends StatelessWidget {
               color: AppTheme.primary,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '🐱 Katzenfrage',
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.catQuestionBadge,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -184,7 +185,7 @@ class _Body extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Was denkst du? 👇',
+            AppLocalizations.of(context)!.whatDoYouThink,
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade500,
@@ -219,7 +220,7 @@ class _Footer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Teste dein Katzenwissen:',
+            AppLocalizations.of(context)!.testYourKnowledge,
             style: TextStyle(
               fontSize: 10,
               color: AppTheme.primary.withAlpha(180),

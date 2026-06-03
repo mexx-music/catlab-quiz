@@ -7,6 +7,7 @@ import 'package:catlab_quiz/features/content/widgets/post_preview_card.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_question.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class PostCreatorScreen extends StatefulWidget {
@@ -102,7 +103,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     await Clipboard.setData(ClipboardData(text: _buildPostText(q, quiz.id)));
     if (context.mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Post-Text kopiert')));
+          .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.postTextCopied)));
     }
   }
 
@@ -160,7 +161,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
 
     if (bytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PNG-Erzeugung fehlgeschlagen')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pngCreationFailed)),
       );
       return;
     }
@@ -172,21 +173,21 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('PNG wurde erzeugt'),
+          title: Text(AppLocalizations.of(context)!.pngCreatedTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _InfoRow(label: 'Größe', value: '$kb KB'),
+              _InfoRow(label: AppLocalizations.of(context)!.sizeLabel, value: '$kb KB'),
               const SizedBox(height: 4),
-              _InfoRow(label: 'Datei', value: filename),
+              _InfoRow(label: AppLocalizations.of(context)!.fileLabel, value: filename),
               if (kIsWeb) ...[
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.download, size: 15),
-                    label: const Text('Herunterladen'),
+                    label: Text(AppLocalizations.of(context)!.download),
                     onPressed: () {
                       _exportService.downloadOnWeb(filename, bytes);
                       Navigator.of(ctx).pop();
@@ -203,7 +204,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Schließen'),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         ),
@@ -260,7 +261,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
           Clipboard.setData(ClipboardData(text: shareText));
           Navigator.of(sheetCtx).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Quiztext erneut kopiert')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.quizTextRecopied)),
           );
         },
       ),
@@ -277,7 +278,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: AppTheme.textDark),
-        title: const Text('Post Creator'),
+        title: Text(AppLocalizations.of(context)!.postCreatorTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: Theme.of(context)
@@ -387,8 +388,8 @@ class _ActionButtons extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.copy, size: 15),
-                  label: const Text('Text kopieren',
-                      style: TextStyle(fontSize: 13)),
+                  label: Text(AppLocalizations.of(context)!.copyText,
+                      style: const TextStyle(fontSize: 13)),
                   onPressed: onCopy,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppTheme.primary,
@@ -411,7 +412,9 @@ class _ActionButtons extends StatelessWidget {
                         )
                       : const Icon(Icons.ios_share, size: 15),
                   label: Text(
-                    sharing ? 'Wird geteilt…' : 'Teilen',
+                    sharing
+                        ? AppLocalizations.of(context)!.sharingInProgress
+                        : AppLocalizations.of(context)!.shareBtn,
                     style: const TextStyle(fontSize: 13),
                   ),
                   onPressed: sharing ? null : onNativeShare,
@@ -430,8 +433,8 @@ class _ActionButtons extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.share_outlined, size: 15),
-                  label: const Text('Teilen vorbereiten',
-                      style: TextStyle(fontSize: 13)),
+                  label: Text(AppLocalizations.of(context)!.prepareSharingTitle,
+                      style: const TextStyle(fontSize: 13)),
                   onPressed: onShare,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.grey.shade700,
@@ -453,7 +456,9 @@ class _ActionButtons extends StatelessWidget {
                         )
                       : const Icon(Icons.image_outlined, size: 15),
                   label: Text(
-                    exportingPng ? 'Wird erstellt…' : 'PNG erstellen',
+                    exportingPng
+                        ? AppLocalizations.of(context)!.creatingPng
+                        : AppLocalizations.of(context)!.createPng,
                     style: const TextStyle(fontSize: 13),
                   ),
                   onPressed: exportingPng ? null : onExportPng,
@@ -504,9 +509,9 @@ class _ShareSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Teilen vorbereiten',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.prepareSharingTitle,
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
               color: AppTheme.textDark,
@@ -543,7 +548,7 @@ class _ShareSheet extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Text kopieren und in Facebook, Instagram, Threads oder Pinterest einfügen.',
+                    AppLocalizations.of(context)!.pasteHint,
                     style: TextStyle(
                         fontSize: 12, color: Colors.blue.shade700),
                   ),
@@ -575,14 +580,14 @@ class _ShareSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Abbrechen'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.copy, size: 15),
-                  label: const Text('Text kopieren'),
+                  label: Text(AppLocalizations.of(context)!.copyText),
                   onPressed: onCopy,
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -599,7 +604,7 @@ class _ShareSheet extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.image_outlined, size: 15),
-                label: const Text('PNG erstellen'),
+                label: Text(AppLocalizations.of(context)!.createPng),
                 onPressed: onExportPng,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.grey.shade700,
@@ -637,9 +642,9 @@ class _AfterShareSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Bild geteilt',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.imageSharedTitle,
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
               color: AppTheme.textDark,
@@ -661,7 +666,7 @@ class _AfterShareSheet extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Der Quiztext wurde kopiert – bitte im Facebook-Textfeld einfügen.',
+                    AppLocalizations.of(context)!.quizTextCopiedHint,
                     style: TextStyle(
                         fontSize: 13, color: Colors.green.shade800),
                   ),
@@ -682,14 +687,14 @@ class _AfterShareSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Fertig'),
+                  child: Text(AppLocalizations.of(context)!.done),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.copy, size: 15),
-                  label: const Text('Text erneut kopieren'),
+                  label: Text(AppLocalizations.of(context)!.recopyText),
                   onPressed: onRecopy,
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -747,11 +752,11 @@ class _Selectors extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SelectorLabel('Quizbogen'),
+        _SelectorLabel(AppLocalizations.of(context)!.quizbookLabel),
         const SizedBox(height: 6),
         DropdownButtonFormField<QuizDefinition>(
           initialValue: selectedQuiz,
-          decoration: _inputDeco('Quiz wählen...'),
+          decoration: _inputDeco(AppLocalizations.of(context)!.chooseQuizHint),
           isExpanded: true,
           items: catalog
               .map(
@@ -767,7 +772,7 @@ class _Selectors extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        _SelectorLabel('Frage'),
+        _SelectorLabel(AppLocalizations.of(context)!.questionSelectorLabel),
         const SizedBox(height: 6),
         if (loadingQuestions)
           const LinearProgressIndicator()
@@ -775,8 +780,8 @@ class _Selectors extends StatelessWidget {
           DropdownButtonFormField<QuizQuestion>(
             initialValue: selectedQuestion,
             decoration: _inputDeco(selectedQuiz == null
-                ? 'Erst Quizbogen wählen'
-                : 'Frage wählen...'),
+                ? AppLocalizations.of(context)!.firstChooseQuizbook
+                : AppLocalizations.of(context)!.chooseQuestionHint),
             isExpanded: true,
             items: questions
                 .map(
@@ -796,14 +801,16 @@ class _Selectors extends StatelessWidget {
             },
           ),
         const SizedBox(height: 20),
-        _SelectorLabel('Format'),
+        _SelectorLabel(AppLocalizations.of(context)!.formatLabel),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           children: [
-            _FormatChip(label: '🐱 Frage-Post', active: true),
+            _FormatChip(label: AppLocalizations.of(context)!.questionPostLabel, active: true),
             _FormatChip(
-                label: '✅ Auflösung', active: false, comingSoon: true),
+                label: AppLocalizations.of(context)!.resolutionComingSoon,
+                active: false,
+                comingSoon: false),
           ],
         ),
       ],

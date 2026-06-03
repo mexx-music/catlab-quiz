@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/content/data/post_queue_service.dart';
 import 'package:catlab_quiz/features/content/models/content_post_status.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _TodayScreenState extends State<TodayScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: AppTheme.textDark),
-        title: const Text('Heute posten'),
+        title: Text(AppLocalizations.of(context)!.todayPostTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: Theme.of(context)
@@ -62,7 +63,7 @@ class _TodayScreenState extends State<TodayScreen> {
                   _StatsCard(stats: _queue.statistics),
                   const SizedBox(height: 20),
                   Text(
-                    'Heute geplant:',
+                    AppLocalizations.of(context)!.plannedToday,
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge
@@ -85,38 +86,34 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   Widget _buildQuestionBlock(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final post = _queue.nextQuestion;
     if (post == null) {
-      return const _EmptySlot(
-        icon: '🐱',
-        message: 'Keine offenen Fragen – alle wurden bereits gepostet.',
-      );
+      return _EmptySlot(icon: '🐱', message: l10n.noOpenQuestions);
     }
     return _TodayCard(
-      sectionLabel: '🐱 Frage des Tages',
+      sectionLabel: '🐱 ${l10n.questionOfTheDay}',
       quizLabel: '${_queue.emojiOf(post)} ${_queue.titleOf(post)}',
       postText: post.questionPost,
-      onCopy: () => _copy(context, post.questionPost, 'Frage-Post kopiert'),
-      actionLabel: 'Frage gepostet',
+      onCopy: () => _copy(context, post.questionPost, l10n.questionPostCopied),
+      actionLabel: l10n.questionPosted,
       actionColor: Colors.orange,
       onAction: () => _act(() => _queue.markQuestionPosted(post)),
     );
   }
 
   Widget _buildAnswerBlock(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final post = _queue.nextAnswer;
     if (post == null) {
-      return const _EmptySlot(
-        icon: '✅',
-        message: 'Keine Fragen warten auf ihre Auflösung.',
-      );
+      return _EmptySlot(icon: '✅', message: l10n.noResolutionsWaiting);
     }
     return _TodayCard(
-      sectionLabel: '✅ Auflösung',
+      sectionLabel: '✅ ${l10n.resolutionPosted}',
       quizLabel: '${_queue.emojiOf(post)} ${_queue.titleOf(post)}',
       postText: post.answerPost,
-      onCopy: () => _copy(context, post.answerPost, 'Auflösung kopiert'),
-      actionLabel: 'Auflösung gepostet',
+      onCopy: () => _copy(context, post.answerPost, l10n.resolutionCopied),
+      actionLabel: l10n.resolutionPosted,
       actionColor: Colors.blue,
       onAction: () => _act(() => _queue.markAnswerPosted(post)),
     );
@@ -263,8 +260,8 @@ class _TodayCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     icon: const Icon(Icons.copy, size: 14),
-                    label: const Text('Kopieren',
-                        style: TextStyle(fontSize: 13)),
+                    label: Text(AppLocalizations.of(context)!.copy,
+                        style: const TextStyle(fontSize: 13)),
                     onPressed: onCopy,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primary,
@@ -345,14 +342,14 @@ class _AllDoneCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.green.shade200),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Text('🎉', style: TextStyle(fontSize: 48)),
-          SizedBox(height: 12),
+          const Text('🎉', style: TextStyle(fontSize: 48)),
+          const SizedBox(height: 12),
           Text(
-            'Alle aktuellen Posts wurden verwendet.',
+            AppLocalizations.of(context)!.allPostsUsed,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.green,

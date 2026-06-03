@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/content/data/content_repository.dart';
 import 'package:catlab_quiz/features/content/data/content_status_repository.dart';
 import 'package:catlab_quiz/features/content/models/content_post.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/features/content/models/content_post_status.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/models/quiz_definition.dart';
@@ -95,7 +96,7 @@ class _ContentLibraryScreenState extends State<ContentLibraryScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: AppTheme.textDark),
-        title: const Text('Content Library'),
+        title: Text(AppLocalizations.of(context)!.contentLibraryTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: Theme.of(context)
@@ -105,13 +106,15 @@ class _ContentLibraryScreenState extends State<ContentLibraryScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
+          : Builder(builder: (context) {
+              final l10n = AppLocalizations.of(context)!;
+              return Column(
               children: [
                 // Status filter
                 _ChipRow(
                   chips: [
                     _ChipData(
-                        label: 'Alle',
+                        label: l10n.allFilter,
                         selected: _statusFilter == null,
                         onTap: () =>
                             setState(() => _statusFilter = null)),
@@ -130,7 +133,7 @@ class _ContentLibraryScreenState extends State<ContentLibraryScreen> {
                 _ChipRow(
                   chips: [
                     _ChipData(
-                        label: 'Alle Quizbögen',
+                        label: l10n.allQuizbooks,
                         selected: _quizFilter == null,
                         onTap: () =>
                             setState(() => _quizFilter = null)),
@@ -147,8 +150,8 @@ class _ContentLibraryScreenState extends State<ContentLibraryScreen> {
                 const Divider(height: 1),
                 Expanded(
                   child: _filtered.isEmpty
-                      ? const Center(
-                          child: Text('Keine Posts in dieser Auswahl.'))
+                      ? Center(
+                          child: Text(l10n.noPostsInSelection))
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
                           itemCount: _filtered.length,
@@ -172,7 +175,8 @@ class _ContentLibraryScreenState extends State<ContentLibraryScreen> {
                         ),
                 ),
               ],
-            ),
+            );
+            }),
     );
   }
 }
@@ -299,21 +303,21 @@ class _PostCard extends StatelessWidget {
 
             // Question post block
             _PostBlock(
-              label: 'Frage-Post',
+              label: AppLocalizations.of(context)!.questionPostSection,
               text: post.questionPost,
-              buttonLabel: 'Kopieren',
+              buttonLabel: AppLocalizations.of(context)!.copy,
               onCopy: () => _copy(
-                  context, post.questionPost, 'Frage-Post kopiert'),
+                  context, post.questionPost, AppLocalizations.of(context)!.questionPostCopied),
             ),
             const SizedBox(height: 10),
 
             // Answer post block
             _PostBlock(
-              label: 'Auflösungs-Post',
+              label: AppLocalizations.of(context)!.resolutionPostSection,
               text: post.answerPost,
-              buttonLabel: 'Auflösung kopieren',
+              buttonLabel: AppLocalizations.of(context)!.copyResolution,
               onCopy: () => _copy(
-                  context, post.answerPost, 'Auflösung kopiert'),
+                  context, post.answerPost, AppLocalizations.of(context)!.resolutionCopied),
             ),
             const SizedBox(height: 12),
 
@@ -388,21 +392,21 @@ class _StatusActions extends StatelessWidget {
         if (showMarkQuestion)
           _ActionButton(
             icon: Icons.check_circle_outline,
-            label: 'Frage markieren',
+            label: AppLocalizations.of(context)!.markQuestion,
             color: Colors.orange,
             onTap: onMarkQuestion,
           ),
         if (showMarkAnswer)
           _ActionButton(
             icon: Icons.check_circle_outline,
-            label: 'Auflösung markieren',
+            label: AppLocalizations.of(context)!.markResolution,
             color: Colors.blue,
             onTap: onMarkAnswer,
           ),
         if (showReset)
           _ActionButton(
             icon: Icons.refresh,
-            label: 'Zurücksetzen',
+            label: AppLocalizations.of(context)!.resetStatus,
             color: Colors.grey.shade500,
             onTap: onReset,
           ),

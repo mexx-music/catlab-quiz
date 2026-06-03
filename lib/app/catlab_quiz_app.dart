@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:catlab_quiz/app/locale_controller.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_home_screen.dart';
 import 'package:catlab_quiz/features/quiz/screens/quiz_play_screen.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class CatlabQuizApp extends StatelessWidget {
@@ -10,22 +13,36 @@ class CatlabQuizApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CatLab Quiz',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
-      builder: (context, child) {
-        final w = MediaQuery.sizeOf(context).width;
-        final maxWidth =
-            w >= 1000 ? 900.0 : (w >= 600 ? 760.0 : double.infinity);
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: child!,
-          ),
-        );
-      },
-      home: const _AppStartup(),
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: localeController,
+      builder: (_, locale, __) => MaterialApp(
+        title: 'CatLab Quiz',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.theme,
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('de'),
+          Locale('en'),
+        ],
+        builder: (context, child) {
+          final w = MediaQuery.sizeOf(context).width;
+          final maxWidth =
+              w >= 1000 ? 900.0 : (w >= 600 ? 760.0 : double.infinity);
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: child!,
+            ),
+          );
+        },
+        home: const _AppStartup(),
+      ),
     );
   }
 }

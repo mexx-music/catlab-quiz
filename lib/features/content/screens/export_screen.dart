@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/features/content/data/export_service.dart';
+import 'package:catlab_quiz/l10n/app_localizations.dart';
 import 'package:catlab_quiz/shared/theme/app_theme.dart';
 
 class ExportScreen extends StatefulWidget {
@@ -33,20 +34,21 @@ class _ExportScreenState extends State<ExportScreen> {
     }
   }
 
-  Future<void> _copy(BuildContext context, String text, String label) async {
+  Future<void> _copy(BuildContext context, String text, String msg) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('$label kopiert')));
+          .showSnackBar(SnackBar(content: Text(msg)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: AppTheme.textDark),
-        title: const Text('Export'),
+        title: Text(l10n.exportTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: Theme.of(context)
@@ -61,28 +63,30 @@ class _ExportScreenState extends State<ExportScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StatsRow(service: _service),
+                  _StatsRow(service: _service, l10n: l10n),
                   const SizedBox(height: 24),
                   _ExportBlock(
                     title: 'JSON',
                     subtitle: '${_service.totalPosts} Posts · RFC JSON',
                     preview: _jsonPreview(_json),
                     fullText: _json,
-                    onCopy: () => _copy(context, _json, 'JSON'),
+                    copyLabel: l10n.copyJson,
+                    onCopy: () => _copy(context, _json, l10n.jsonCopied),
                   ),
                   const SizedBox(height: 16),
                   _ExportBlock(
                     title: 'CSV',
-                    subtitle: '${_service.totalPosts} Zeilen · RFC 4180',
+                    subtitle: '${_service.totalPosts} rows · RFC 4180',
                     preview: _csvPreview(_csv),
                     fullText: _csv,
-                    onCopy: () => _copy(context, _csv, 'CSV'),
+                    copyLabel: l10n.copyCsv,
+                    onCopy: () => _copy(context, _csv, l10n.csvCopied),
                   ),
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Text(
-                      'Kompatibel mit Publer · Buffer · Metricool und anderen\nScheduling-Tools.',
+                      l10n.schedulerHint,
                       style: TextStyle(
                           fontSize: 12, color: Colors.grey.shade500),
                     ),
@@ -114,7 +118,8 @@ class _ExportScreenState extends State<ExportScreen> {
 
 class _StatsRow extends StatelessWidget {
   final ExportService service;
-  const _StatsRow({required this.service});
+  final AppLocalizations l10n;
+  const _StatsRow({required this.service, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -134,13 +139,13 @@ class _StatsRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _Stat(label: 'Quizbögen', value: '${service.quizCount}',
+          _Stat(label: l10n.quizbooks, value: '${service.quizCount}',
               color: AppTheme.primary),
-          _Stat(label: 'Posts gesamt', value: '${service.totalPosts}',
+          _Stat(label: l10n.postsTotalLabel, value: '${service.totalPosts}',
               color: AppTheme.textDark),
-          _Stat(label: 'Offen', value: '${service.openPosts}',
+          _Stat(label: l10n.openPostsLabel, value: '${service.openPosts}',
               color: Colors.grey.shade500),
-          _Stat(label: 'Erledigt', value: '${service.completedPosts}',
+          _Stat(label: l10n.donePostsLabel, value: '${service.completedPosts}',
               color: Colors.green),
         ],
       ),
@@ -178,6 +183,7 @@ class _ExportBlock extends StatelessWidget {
   final String subtitle;
   final String preview;
   final String fullText;
+  final String copyLabel;
   final VoidCallback onCopy;
 
   const _ExportBlock({
@@ -185,6 +191,7 @@ class _ExportBlock extends StatelessWidget {
     required this.subtitle,
     required this.preview,
     required this.fullText,
+    required this.copyLabel,
     required this.onCopy,
   });
 
@@ -233,7 +240,7 @@ class _ExportBlock extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton.icon(
             icon: const Icon(Icons.copy, size: 14),
-            label: Text('$title kopieren',
+            label: Text(copyLabel,
                 style: const TextStyle(fontSize: 13)),
             onPressed: onCopy,
             style: OutlinedButton.styleFrom(
