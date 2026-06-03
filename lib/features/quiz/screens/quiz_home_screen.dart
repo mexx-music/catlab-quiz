@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:catlab_quiz/app/admin_access_service.dart';
 import 'package:catlab_quiz/app/app_config.dart';
 import 'package:catlab_quiz/features/quiz/data/highscore_repository.dart';
 import 'package:catlab_quiz/features/quiz/data/quiz_repository.dart';
@@ -22,14 +24,91 @@ class QuizHomeScreen extends StatefulWidget {
 class _QuizHomeScreenState extends State<QuizHomeScreen> {
   final _repo = QuizRepository();
   final _highscoreRepo = HighscoreRepository();
+  final _adminService = AdminAccessService();
   List<QuizDefinition> _catalog = [];
   final Map<String, int?> _highscores = {};
   QuizQuestion? _dailyQuestion;
+  bool _adminUnlocked = false;
+  int _catTapCount = 0;
+  Timer? _catTapTimer;
+
+  bool get _isAdmin => AppConfig.adminMode || _adminUnlocked;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _loadAdminStatus();
+  }
+
+  @override
+  void dispose() {
+    _catTapTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadAdminStatus() async {
+    final unlocked = await _adminService.isUnlocked();
+    if (mounted) setState(() => _adminUnlocked = unlocked);
+  }
+
+  void _onCatTap() {
+    _catTapTimer?.cancel();
+    _catTapCount++;
+    if (_catTapCount >= 3) {
+      _catTapCount = 0;
+      _showAdminDialog();
+    } else {
+      _catTapTimer = Timer(const Duration(milliseconds: 1500), () {
+        _catTapCount = 0;
+      });
+    }
+  }
+
+  void _showAdminDialog() {
+    final controller = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Admin-Zugang'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(labelText: 'Code'),
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          onSubmitted: (_) => _tryUnlock(ctx, controller.text),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Abbrechen'),
+          ),
+          ElevatedButton(
+            onPressed: () => _tryUnlock(ctx, controller.text),
+            child: const Text('Freischalten'),
+          ),
+        ],
+      ),
+    ).then((_) => controller.dispose());
+  }
+
+  Future<void> _tryUnlock(BuildContext dialogCtx, String code) async {
+    Navigator.of(dialogCtx).pop();
+    if (code.trim() == '3391') {
+      await _adminService.unlock();
+      if (mounted) setState(() => _adminUnlocked = true);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Falscher Code')),
+        );
+      }
+    }
+  }
+
+  Future<void> _lockAdmin() async {
+    await _adminService.lock();
+    if (mounted) setState(() => _adminUnlocked = false);
   }
 
   Future<void> _loadData() async {
@@ -87,11 +166,15 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             children: [
-              Text(
-                'CatLab 🐱 Quiz',
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineMedium?.copyWith(fontSize: 32),
+              GestureDetector(
+                onTap: _onCatTap,
+                behavior: HitTestBehavior.opaque,
+                child: Text(
+                  'CatLab 🐱 Quiz',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineMedium?.copyWith(fontSize: 32),
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -100,7 +183,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              if (AppConfig.adminMode) ...[
+              if (_isAdmin) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -145,7 +228,23 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 2),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: _lockAdmin,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade400,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: const TextStyle(fontSize: 11),
+                    ),
+                    child: const Text('🔒 Admin sperren'),
+                  ),
+                ),
+                const SizedBox(height: 8),
               ],
               Expanded(
                 child: ListView(
@@ -216,6 +315,7 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                                 onTap: () => _startQuiz(context, quiz),
                                 onShowPost: () =>
                                     _showPostSheet(context, quiz),
+                                isAdmin: _isAdmin,
                               );
                           if (cols == 1) {
                             return Column(
@@ -451,12 +551,14 @@ class _QuizCard extends StatelessWidget {
   final int? highscore;
   final VoidCallback onTap;
   final VoidCallback onShowPost;
+  final bool isAdmin;
 
   const _QuizCard({
     required this.quiz,
     required this.highscore,
     required this.onTap,
     required this.onShowPost,
+    required this.isAdmin,
   });
 
   @override
@@ -527,7 +629,7 @@ class _QuizCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        if (AppConfig.adminMode) ...[
+                        if (isAdmin) ...[
                           const SizedBox(height: 4),
                           GestureDetector(
                             onTap: onShowPost,

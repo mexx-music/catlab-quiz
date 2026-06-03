@@ -69,20 +69,37 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
   static const _labels = ['A', 'B', 'C', 'D'];
 
   // Prepared for v2: add PostFormat param to switch between questionPost / answerPost
-  static String _buildPostText(QuizQuestion q) {
+  static String _buildPostText(QuizQuestion q, String quizId) {
     final answers = List.generate(
       q.answers.length,
       (i) => '${_labels[i]}) ${q.answers[i]}',
     ).join('\n');
-    return '🐱 Katzenfrage\n\n${q.question}\n\n$answers\n\nWas denkst du?\n\nMehr:\nquiz.schnurrpurr.com';
+    return '🐱 Katzenfrage\n\n${q.question}\n\n$answers\n\nWas denkst du?\n\nMehr:\nquiz.schnurrpurr.com/?quiz=$quizId';
+  }
+
+  // Full share text: challenge header + question + answers + deep link.
+  // Copied to clipboard before every image share so it's ready to paste in
+  // Facebook/Instagram after the image is posted.
+  static String _buildShareText(QuizQuestion q, String quizId) {
+    final answers = List.generate(
+      q.answers.length,
+      (i) => '${_labels[i]}) ${q.answers[i]}',
+    ).join('\n');
+    return '🐱 CatLab Quiz Challenge\n\n'
+        'Schaffst du diese Katzenfrage?\n\n'
+        '${q.question}\n\n'
+        '$answers\n\n'
+        'Teste dein Katzenwissen:\n'
+        'https://quiz.schnurrpurr.com/?quiz=$quizId';
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
   Future<void> _copyText(BuildContext context) async {
+    final quiz = _selectedQuiz;
     final q = _selectedQuestion;
-    if (q == null) return;
-    await Clipboard.setData(ClipboardData(text: _buildPostText(q)));
+    if (quiz == null || q == null) return;
+    await Clipboard.setData(ClipboardData(text: _buildPostText(q, quiz.id)));
     if (context.mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Post-Text kopiert')));
@@ -90,9 +107,10 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
   }
 
   void _showShareSheet(BuildContext context) {
+    final quiz = _selectedQuiz;
     final q = _selectedQuestion;
-    if (q == null) return;
-    final postText = _buildPostText(q);
+    if (quiz == null || q == null) return;
+    final postText = _buildPostText(q, quiz.id);
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -200,6 +218,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
 
     final pixelRatio =
         MediaQuery.of(context).devicePixelRatio.clamp(2.0, 3.0);
+    final shareText = _buildShareText(question, quiz.id);
 
     setState(() => _sharing = true);
 
@@ -212,13 +231,40 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     setState(() => _sharing = false);
 
     if (bytes != null) {
+      // Copy full quiz text BEFORE the share sheet opens so it's ready to
+      // paste in Facebook/Instagram/Threads immediately after sharing the image.
+      Clipboard.setData(ClipboardData(text: shareText));
+
       await _shareService.shareImage(
         bytes,
         _exportService.filenameFor(quiz.id, question.id),
+        text: shareText,
       );
+
+      if (!context.mounted) return;
+      _showAfterShareSheet(context, shareText);
     } else {
-      await _shareService.shareText(_buildPostText(question));
+      await _shareService.shareText(shareText);
     }
+  }
+
+  void _showAfterShareSheet(BuildContext context, String shareText) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => _AfterShareSheet(
+        onRecopy: () {
+          Clipboard.setData(ClipboardData(text: shareText));
+          Navigator.of(sheetCtx).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Quiztext erneut kopiert')),
+          );
+        },
+      ),
+    );
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -565,6 +611,95 @@ class _ShareSheet extends StatelessWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+// ── After-share bottom sheet ──────────────────────────────────────────────────
+
+class _AfterShareSheet extends StatelessWidget {
+  final VoidCallback onRecopy;
+
+  const _AfterShareSheet({required this.onRecopy});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 32,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Bild geteilt',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textDark,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.check_circle_outline,
+                    size: 16, color: Colors.green.shade700),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Der Quiztext wurde kopiert – bitte im Facebook-Textfeld einfügen.',
+                    style: TextStyle(
+                        fontSize: 13, color: Colors.green.shade800),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey.shade600,
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text('Fertig'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.copy, size: 15),
+                  label: const Text('Text erneut kopieren'),
+                  onPressed: onRecopy,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

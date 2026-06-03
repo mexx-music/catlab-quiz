@@ -69,8 +69,11 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   }
 
   Future<void> _copyResult(BuildContext context, _Level level) async {
+    final quizLink = widget.categoryKey == 'daily'
+        ? 'quiz.schnurrpurr.com'
+        : 'quiz.schnurrpurr.com/?quiz=${widget.categoryKey}';
     final text =
-        '🐱 CatLab Quiz Ergebnis\n\nQuiz:\n${widget.quizTitle}\n\nPunkte:\n${widget.score}/${widget.total}\n\nStufe:\n${level.emoji} ${level.title}\n\nTeste dein Wissen:\nquiz.schnurrpurr.com';
+        '🐱 CatLab Quiz Ergebnis\n\nQuiz:\n${widget.quizTitle}\n\nPunkte:\n${widget.score}/${widget.total}\n\nStufe:\n${level.emoji} ${level.title}\n\nTeste dein Wissen:\n$quizLink';
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

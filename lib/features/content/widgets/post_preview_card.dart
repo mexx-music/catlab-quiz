@@ -53,7 +53,7 @@ class PostPreviewCard extends StatelessWidget {
         children: [
           _Banner(imageAsset: quiz.imageAsset, emoji: quiz.emoji),
           _Body(question: question),
-          _Footer(),
+          _Footer(quizId: quiz.id),
         ],
       ),
     );
@@ -200,12 +200,14 @@ class _Body extends StatelessWidget {
 // ── Footer ────────────────────────────────────────────────────────────────────
 
 class _Footer extends StatelessWidget {
+  final String quizId;
+  const _Footer({required this.quizId});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       decoration: BoxDecoration(
         color: AppTheme.primary.withAlpha(18),
         border: Border(
@@ -223,9 +225,9 @@ class _Footer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 1),
-          const Text(
-            '🐱 quiz.schnurrpurr.com',
-            style: TextStyle(
+          Text(
+            '🐱 quiz.schnurrpurr.com/?quiz=$quizId',
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppTheme.primary,
