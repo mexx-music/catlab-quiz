@@ -14,7 +14,7 @@ const _allAssetPaths = [
 
 class QuizRepository {
   Future<List<QuizDefinition>> loadCatalog() async {
-    final jsonString = await rootBundle.loadString('assets/quiz/quiz_catalog.json');
+    final jsonString = await _loadLocalized('assets/quiz/quiz_catalog.json');
     final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
     return jsonList
         .map((e) => QuizDefinition.fromJson(e as Map<String, dynamic>))
