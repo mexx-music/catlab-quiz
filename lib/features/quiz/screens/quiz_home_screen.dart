@@ -41,12 +41,18 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     super.initState();
     _loadData();
     _loadAdminStatus();
+    localeController.addListener(_onLocaleChanged);
   }
 
   @override
   void dispose() {
+    localeController.removeListener(_onLocaleChanged);
     _catTapTimer?.cancel();
     super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    _loadData();
   }
 
   Future<void> _loadAdminStatus() async {

@@ -661,6 +661,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Zurücksetzen'**
   String get resetStatus;
+
+  /// No description provided for @webShareFallbackTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen nicht unterstützt'**
+  String get webShareFallbackTitle;
+
+  /// No description provided for @webShareFallbackHint.
+  ///
+  /// In de, this message translates to:
+  /// **'iPhone Web kann das Bild eventuell nicht direkt teilen. Der Quiztext wurde kopiert – bitte PNG speichern und manuell posten.'**
+  String get webShareFallbackHint;
+
+  /// No description provided for @downloadPng.
+  ///
+  /// In de, this message translates to:
+  /// **'PNG herunterladen'**
+  String get downloadPng;
 }
 
 class _AppLocalizationsDelegate

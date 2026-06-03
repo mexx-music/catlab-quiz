@@ -300,4 +300,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get resetStatus => 'Zurücksetzen';
+
+  @override
+  String get webShareFallbackTitle => 'Teilen nicht unterstützt';
+
+  @override
+  String get webShareFallbackHint =>
+      'iPhone Web kann das Bild eventuell nicht direkt teilen. Der Quiztext wurde kopiert – bitte PNG speichern und manuell posten.';
+
+  @override
+  String get downloadPng => 'PNG herunterladen';
 }

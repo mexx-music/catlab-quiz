@@ -121,5 +121,9 @@
   "copyResolution": "Auflösung kopieren",
   "markQuestion": "Frage markieren",
   "markResolution": "Auflösung markieren",
-  "resetStatus": "Zurücksetzen"
+  "resetStatus": "Zurücksetzen",
+
+  "webShareFallbackTitle": "Teilen nicht unterstützt",
+  "webShareFallbackHint": "iPhone Web kann das Bild eventuell nicht direkt teilen. Der Quiztext wurde kopiert – bitte PNG speichern und manuell posten.",
+  "downloadPng": "PNG herunterladen"
 }

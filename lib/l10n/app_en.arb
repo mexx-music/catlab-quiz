@@ -105,5 +105,9 @@
   "copyResolution": "Copy resolution",
   "markQuestion": "Mark question",
   "markResolution": "Mark resolution",
-  "resetStatus": "Reset"
+  "resetStatus": "Reset",
+
+  "webShareFallbackTitle": "Sharing Not Supported",
+  "webShareFallbackHint": "iPhone web may not be able to share the image directly. The quiz text has been copied – please save the PNG and post manually.",
+  "downloadPng": "Download PNG"
 }

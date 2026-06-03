@@ -299,4 +299,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetStatus => 'Reset';
+
+  @override
+  String get webShareFallbackTitle => 'Sharing Not Supported';
+
+  @override
+  String get webShareFallbackHint =>
+      'iPhone web may not be able to share the image directly. The quiz text has been copied – please save the PNG and post manually.';
+
+  @override
+  String get downloadPng => 'Download PNG';
 }

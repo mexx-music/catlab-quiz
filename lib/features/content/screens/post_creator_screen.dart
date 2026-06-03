@@ -220,6 +220,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     final pixelRatio =
         MediaQuery.of(context).devicePixelRatio.clamp(2.0, 3.0);
     final shareText = _buildShareText(question, quiz.id);
+    final filename = _exportService.filenameFor(quiz.id, question.id);
 
     setState(() => _sharing = true);
 
@@ -232,18 +233,24 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
     setState(() => _sharing = false);
 
     if (bytes != null) {
-      // Copy full quiz text BEFORE the share sheet opens so it's ready to
-      // paste in Facebook/Instagram/Threads immediately after sharing the image.
+      // Always copy text before the share sheet opens so it is ready to paste
+      // in Facebook/Instagram/Threads regardless of what the platform supports.
       Clipboard.setData(ClipboardData(text: shareText));
 
-      await _shareService.shareImage(
+      final outcome = await _shareService.shareImage(
         bytes,
-        _exportService.filenameFor(quiz.id, question.id),
+        filename,
         text: shareText,
       );
 
       if (!context.mounted) return;
-      _showAfterShareSheet(context, shareText);
+
+      if (outcome == ShareImageOutcome.failed) {
+        // Share API completely unavailable (common on iPhone Safari PWA / web).
+        _showWebFallbackSheet(context, shareText, bytes, filename);
+      } else {
+        _showAfterShareSheet(context, shareText);
+      }
     } else {
       await _shareService.shareText(shareText);
     }
@@ -261,9 +268,43 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
           Clipboard.setData(ClipboardData(text: shareText));
           Navigator.of(sheetCtx).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.quizTextRecopied)),
+            SnackBar(
+                content:
+                    Text(AppLocalizations.of(context)!.quizTextRecopied)),
           );
         },
+      ),
+    );
+  }
+
+  void _showWebFallbackSheet(
+    BuildContext context,
+    String shareText,
+    Uint8List pngBytes,
+    String filename,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => _WebFallbackSheet(
+        onRecopyText: () {
+          Clipboard.setData(ClipboardData(text: shareText));
+          Navigator.of(sheetCtx).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text(AppLocalizations.of(context)!.postTextCopied)),
+          );
+        },
+        onDownloadPng: kIsWeb
+            ? () {
+                _exportService.downloadOnWeb(filename, pngBytes);
+                Navigator.of(sheetCtx).pop();
+              }
+            : null,
       ),
     );
   }
@@ -609,6 +650,118 @@ class _ShareSheet extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.grey.shade700,
                   side: BorderSide(color: Colors.grey.shade400),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ── Web fallback sheet (iPhone Safari / unsupported browsers) ────────────────
+
+class _WebFallbackSheet extends StatelessWidget {
+  final VoidCallback onRecopyText;
+  final VoidCallback? onDownloadPng;
+
+  const _WebFallbackSheet({
+    required this.onRecopyText,
+    this.onDownloadPng,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 32,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.webShareFallbackTitle,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textDark,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.amber.shade300),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline,
+                    size: 16, color: Colors.amber.shade800),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.webShareFallbackHint,
+                    style: TextStyle(
+                        fontSize: 13, color: Colors.amber.shade900),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.grey.shade600,
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: Text(l10n.done),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.copy, size: 15),
+                  label: Text(l10n.copyText),
+                  onPressed: onRecopyText,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (onDownloadPng != null) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.download, size: 15),
+                label: Text(l10n.downloadPng),
+                onPressed: onDownloadPng,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primary,
+                  side: const BorderSide(color: AppTheme.primary),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
