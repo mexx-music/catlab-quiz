@@ -53,7 +53,7 @@ class PostPreviewCard extends StatelessWidget {
         children: [
           _Banner(imageAsset: quiz.imageAsset, emoji: quiz.emoji),
           _Body(question: question),
-          _Footer(quizId: quiz.id),
+          _Footer(quizId: quiz.id, questionId: question.id),
         ],
       ),
     );
@@ -201,7 +201,8 @@ class _Body extends StatelessWidget {
 
 class _Footer extends StatelessWidget {
   final String quizId;
-  const _Footer({required this.quizId});
+  final String questionId;
+  const _Footer({required this.quizId, required this.questionId});
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +227,7 @@ class _Footer extends StatelessWidget {
           ),
           const SizedBox(height: 1),
           Text(
-            '🐱 quiz.schnurrpurr.com/?quiz=$quizId',
+            '🐱 quiz.schnurrpurr.com/?quiz=$quizId&q=$questionId',
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,

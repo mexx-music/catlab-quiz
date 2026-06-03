@@ -46,14 +46,15 @@ class _AppStartupState extends State<_AppStartup> {
     if (kIsWeb) {
       final quizId = Uri.base.queryParameters['quiz'];
       if (quizId != null && quizId.isNotEmpty) {
+        final questionId = Uri.base.queryParameters['q'];
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => _launchDeepLink(quizId),
+          (_) => _launchDeepLink(quizId, questionId),
         );
       }
     }
   }
 
-  Future<void> _launchDeepLink(String quizId) async {
+  Future<void> _launchDeepLink(String quizId, String? questionId) async {
     final repo = QuizRepository();
     final catalog = await repo.loadCatalog();
     final matches = catalog.where((q) => q.id == quizId);
@@ -61,6 +62,16 @@ class _AppStartupState extends State<_AppStartup> {
     if (!mounted || quiz == null) return;
     final questions = await repo.loadQuestions(quiz.assetPath);
     if (!mounted) return;
+
+    // If a specific question was linked, bring it to the front of the list.
+    // idx == 0: already first.  idx == -1: not found, keep normal order.
+    if (questionId != null) {
+      final idx = questions.indexWhere((q) => q.id == questionId);
+      if (idx > 0) {
+        questions.insert(0, questions.removeAt(idx));
+      }
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => QuizPlayScreen(

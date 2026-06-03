@@ -74,7 +74,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
       q.answers.length,
       (i) => '${_labels[i]}) ${q.answers[i]}',
     ).join('\n');
-    return '🐱 Katzenfrage\n\n${q.question}\n\n$answers\n\nWas denkst du?\n\nMehr:\nquiz.schnurrpurr.com/?quiz=$quizId';
+    return '🐱 Katzenfrage\n\n${q.question}\n\n$answers\n\nWas denkst du?\n\nMehr:\nquiz.schnurrpurr.com/?quiz=$quizId&q=${q.id}';
   }
 
   // Full share text: challenge header + question + answers + deep link.
@@ -90,7 +90,7 @@ class _PostCreatorScreenState extends State<PostCreatorScreen> {
         '${q.question}\n\n'
         '$answers\n\n'
         'Teste dein Katzenwissen:\n'
-        'https://quiz.schnurrpurr.com/?quiz=$quizId';
+        'https://quiz.schnurrpurr.com/?quiz=$quizId&q=${q.id}';
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
