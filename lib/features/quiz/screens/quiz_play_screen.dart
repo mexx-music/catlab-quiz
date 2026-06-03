@@ -76,8 +76,13 @@ class _QuizPlayScreenState extends State<QuizPlayScreen> {
         leading: const BackButton(color: AppTheme.textDark),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            24,
+            8,
+            24,
+            MediaQuery.of(context).viewPadding.bottom + 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
