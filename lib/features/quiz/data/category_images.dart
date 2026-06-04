@@ -67,11 +67,26 @@ class CategoryImages {
     'cat_mixed_challenge': all,
   };
 
-  /// Returns a random image path for [categoryId].
-  /// Falls back to [fallback] when the category is unknown.
-  static String pick(String categoryId, Random rng) {
-    final images = _groups[categoryId];
-    if (images == null || images.isEmpty) return fallback;
-    return images[rng.nextInt(images.length)];
+  /// Returns a random image path for [categoryId], preferring images not yet
+  /// present in [used]. Adds the chosen path to [used].
+  ///
+  /// Falls back to the full category pool (allowing a repeat) only when every
+  /// image in the pool has already been used.
+  static String pickUnique(
+    String categoryId,
+    Random rng,
+    Set<String> used,
+  ) {
+    final pool = _groups[categoryId];
+    if (pool == null || pool.isEmpty) return fallback;
+
+    final available =
+        pool.where((img) => !used.contains(img)).toList(growable: false);
+    final chosen = available.isNotEmpty
+        ? available[rng.nextInt(available.length)]
+        : pool[rng.nextInt(pool.length)];
+
+    used.add(chosen);
+    return chosen;
   }
 }

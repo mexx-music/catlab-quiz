@@ -137,8 +137,10 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     // (locale switch, back-navigation) so images stay stable.
     if (_categoryImages.isEmpty) {
       final rng = Random();
+      final used = <String>{};
       for (final quiz in catalog) {
-        _categoryImages[quiz.id] = CategoryImages.pick(quiz.id, rng);
+        _categoryImages[quiz.id] =
+            CategoryImages.pickUnique(quiz.id, rng, used);
       }
     }
 
