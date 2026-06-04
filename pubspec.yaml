@@ -78,6 +78,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/catpics/
     - assets/quiz/
     - assets/quiz/en/
     - assets/content/

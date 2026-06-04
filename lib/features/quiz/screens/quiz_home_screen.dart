@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:catlab_quiz/app/admin_access_service.dart';
+import 'package:catlab_quiz/features/quiz/data/category_images.dart';
 import 'package:catlab_quiz/app/app_config.dart';
 import 'package:catlab_quiz/app/locale_controller.dart';
 import 'package:catlab_quiz/l10n/app_localizations.dart';
@@ -30,6 +32,8 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
   List<QuizDefinition> _catalog = [];
   final Map<String, int?> _highscores = {};
   QuizQuestion? _dailyQuestion;
+  // Populated once per session; keys are quiz IDs, values are asset paths.
+  final Map<String, String> _categoryImages = {};
   bool _adminUnlocked = false;
   int _catTapCount = 0;
   Timer? _catTapTimer;
@@ -128,6 +132,16 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
     for (final quiz in catalog) {
       results[quiz.id] = await _highscoreRepo.getHighscore(quiz.id);
     }
+
+    // Pick random banner images once per session; skip on subsequent calls
+    // (locale switch, back-navigation) so images stay stable.
+    if (_categoryImages.isEmpty) {
+      final rng = Random();
+      for (final quiz in catalog) {
+        _categoryImages[quiz.id] = CategoryImages.pick(quiz.id, rng);
+      }
+    }
+
     if (mounted) {
       setState(() {
         _catalog = catalog;
@@ -324,13 +338,14 @@ class _QuizHomeScreenState extends State<QuizHomeScreen> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final cols = constraints.maxWidth >= 600 ? 2 : 1;
-                          Widget card(quiz) => _QuizCard(
+                          Widget card(QuizDefinition quiz) => _QuizCard(
                                 quiz: quiz,
                                 highscore: _highscores[quiz.id],
                                 onTap: () => _startQuiz(context, quiz),
                                 onShowPost: () =>
                                     _showPostSheet(context, quiz),
                                 isAdmin: _isAdmin,
+                                imageOverride: _categoryImages[quiz.id],
                               );
                           if (cols == 1) {
                             return Column(
@@ -567,6 +582,7 @@ class _QuizCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onShowPost;
   final bool isAdmin;
+  final String? imageOverride;
 
   const _QuizCard({
     required this.quiz,
@@ -574,6 +590,7 @@ class _QuizCard extends StatelessWidget {
     required this.onTap,
     required this.onShowPost,
     required this.isAdmin,
+    this.imageOverride,
   });
 
   @override
@@ -594,9 +611,10 @@ class _QuizCard extends StatelessWidget {
                 builder: (context, constraints) {
                   final cw = constraints.maxWidth;
                   final h = cw >= 460 ? 200.0 : (cw >= 376 ? 170.0 : 150.0);
-                  return quiz.imageAsset != null
+                  final effectiveImage = imageOverride ?? quiz.imageAsset;
+                  return effectiveImage != null
                       ? Image.asset(
-                          quiz.imageAsset!,
+                          effectiveImage,
                           width: double.infinity,
                           height: h,
                           fit: BoxFit.cover,
